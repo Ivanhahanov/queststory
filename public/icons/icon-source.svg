@@ -1,0 +1,23 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="24%" cy="12%" r="100%">
+      <stop offset="0%" stop-color="#3d2f66"/>
+      <stop offset="55%" stop-color="#241a3d"/>
+      <stop offset="100%" stop-color="#160f26"/>
+    </radialGradient>
+    <linearGradient id="mark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f3c669"/>
+      <stop offset="100%" stop-color="#e0973f"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" fill="url(#bg)"/>
+
+  <!-- compass star mark, centered within the ~80% safe zone for maskable icons -->
+  <g transform="translate(256 256)">
+    <circle r="132" fill="none" stroke="url(#mark)" stroke-width="6" opacity="0.55"/>
+    <path d="M0 -118 L28 -28 L118 0 L28 28 L0 118 L-28 28 L-118 0 L-28 -28 Z" fill="url(#mark)"/>
+    <circle r="20" fill="#1a1230"/>
+    <circle r="20" fill="none" stroke="url(#mark)" stroke-width="4"/>
+  </g>
+</svg>

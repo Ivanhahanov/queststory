@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Квестория
 
-## Getting Started
+Веб-сервис для ведущих сюжетно-ролевых квестов («квесторий»): конструктор ролей, целей и раундов, раздача ролей по QR-кодам, живая панель ведущего и клиентская PWA-страница для игроков.
 
-First, run the development server:
+## Стек
+
+- **Next.js 16** (App Router, webpack — PWA-плагин пока не поддерживает Turbopack), **TypeScript**, **Tailwind CSS v4**, **shadcn/ui** (на базе `@base-ui/react`)
+- **Supabase**: Postgres + RLS, Realtime (Postgres Changes + Presence), анонимная авторизация игроков, Storage (фото для активностей)
+- **PWA**: `@ducanh2912/next-pwa`, Web Push (`web-push`, VAPID)
+- **Dicebear** — генерация аватаров ролей, **qrcode.react** — QR-коды приглашений
+
+## Разработка
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+supabase start              # локальный Postgres/Auth/Realtime/Storage в Docker
+supabase gen types typescript --local > src/lib/supabase/types.ts
+cp .env.local.example .env.local   # заполнить ключами из `supabase status -o env`
+npm run dev                 # PWA отключена в dev-режиме — сервис-воркер не собирается
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Для проверки PWA/push (сервис-воркер собирается только в production-режиме):
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+npm run start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Структура
 
-## Learn More
+- `/games` — список игр ведущего (требует входа)
+- `/games/[id]/constructor` — Страница 1: история, раунды, роли, цели, эффекты, активности
+- `/games/[id]/distribute` — Страница 2: раздача ролей, QR-коды
+- `/games/[id]/live` — Страница 3: таймер, раунды, карточки игроков, действия, активности
+- `/kiosk/[runId]` — публичный полноэкранный экран для общего устройства (PIN/голосование)
+- `/play/[joinToken]` → `/play/[joinToken]/game` — вход и экран игрока
 
-To learn more about Next.js, take a look at the following resources:
+### Модель данных и права доступа
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Схема — в `supabase/migrations`. Ведущий — обычный пользователь Supabase Auth (email/password), игрок — анонимная сессия, привязанная к строке `players` через RPC `claim_player`. RLS отдаёт игроку только его роль, сообщения и (через RPC `get_visible_goals`) цели, открытые текущим раундом — секреты вроде правильного PIN-кода игроку не видны ни при каком прямом запросе к таблицам, только через серверные route handlers.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+> Важно: таблицы, созданные ролью `postgres` (то есть все миграции), не получают базовые Postgres-права (`GRANT`) на `anon`/`authenticated`/`service_role` автоматически — это делает миграция `00000000000003_grants.sql`. Если добавляете новую таблицу, права на неё она выдаст сама (там же настроен `ALTER DEFAULT PRIVILEGES`).
 
-## Deploy on Vercel
+## Переменные окружения
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+См. `.env.local.example`. Для продакшена дополнительно нужны реальные Supabase Cloud ключи и `NEXT_PUBLIC_APP_URL` с боевым доменом (используется в ссылках/QR-кодах игроков).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Известные ограничения
+
+- Push-уведомления работают только для PWA, установленного на экран «Домой» (iOS 16.4+); в ЕС из-за DMA-ограничений Apple push может не работать вовсе — поэтому основной канал уведомлений всегда live-обновления в открытой странице.
+- `npm audit` показывает уязвимости в `workbox-build` (транзитивная зависимость `@ducanh2912/next-pwa`, используется только при сборке, не попадает в браузерный бандл) — на момент написания это актуальная версия пакета.

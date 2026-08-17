@@ -1,0 +1,17 @@
+{
+  "name": "Квестория — панель ведущего",
+  "short_name": "Квестория",
+  "description": "Сюжетно-ролевые квесты: роли, цели, раунды и живое управление игрой",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#160f26",
+  "theme_color": "#241a3d",
+  "lang": "ru",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
