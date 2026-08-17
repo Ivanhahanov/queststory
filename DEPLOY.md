@@ -2,45 +2,36 @@
 
 Разовая ручная настройка ниже занимает ~15 минут. После неё деплой полностью
 автоматический: пуш в `main` → Vercel сам собирает и выкатывает приложение
-(встроенная git-интеграция, отдельный workflow не нужен), а миграции БД
-применяет GitHub Action `.github/workflows/deploy-migrations.yml`. Руками
-после настройки нужно только мержить PR.
+(встроенная git-интеграция), а миграции БД применяет встроенная GitHub-интеграция
+самого Supabase. Руками после настройки нужно только мержить PR — ни токенов,
+ни секретов, ни workflow-файлов заводить не пришлось.
 
 ## 1. Supabase Cloud (разово)
 
-1. Создайте проект на [supabase.com](https://supabase.com/dashboard) (регион — ближе к игрокам, например Frankfurt). Задайте и сохраните пароль БД — понадобится для GitHub Action.
-2. Локально свяжите проект и примените текущие миграции первый раз вручную:
-
-   ```bash
-   supabase login
-   supabase link --project-ref <project-ref>   # ref виден в Project Settings → General
-   supabase db push
-   ```
-
-3. Включите анонимную авторизацию (по умолчанию выключена в облаке, в отличие от локального стенда):
+1. Создайте проект на [supabase.com](https://supabase.com/dashboard) (регион — ближе к игрокам, например Frankfurt).
+2. Включите анонимную авторизацию (по умолчанию выключена в облаке, в отличие от локального стенда):
    Authentication → Sign In / Providers → **Anonymous sign-ins** → Enable.
-4. Проверьте, что бакет `activity-photos` создался (Storage) — он идёт миграцией `00000000000004_storage.sql`, публичный на чтение.
-5. Возьмите ключи в Project Settings → API:
+3. Возьмите ключи в Project Settings → API:
    - `Project URL` → `NEXT_PUBLIC_SUPABASE_URL`
    - `anon public` → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `service_role` → `SUPABASE_SERVICE_ROLE_KEY` (секрет, не публиковать)
-6. Создайте Personal Access Token для CLI: [supabase.com/dashboard/account/tokens](https://supabase.com/dashboard/account/tokens) → New token.
 
-## 2. GitHub Actions — автодеплой миграций (разово)
+## 2. Supabase ↔ GitHub интеграция — автодеплой миграций (разово)
 
-В настройках репозитория **Settings → Secrets and variables → Actions** добавьте:
+В Supabase-проекте: **Project Settings → Integrations → GitHub Connection**
+(или раздел «Integrations» в дашборде) → Connect. Авторизуйте GitHub-приложение
+Supabase, выберите этот репозиторий, ветку `main` как production branch, и
+путь к папке — по умолчанию корень репозитория, наши миграции лежат в
+`supabase/migrations`, ничего менять не нужно.
 
-| Secret | Значение |
-|---|---|
-| `SUPABASE_ACCESS_TOKEN` | personal access token из шага 1.6 |
-| `SUPABASE_PROJECT_ID` | project ref (тот же `<project-ref>`, что и в `supabase link`) |
-| `SUPABASE_DB_PASSWORD` | пароль БД, заданный при создании проекта |
+После этого при каждом пуше в `main`, где менялись файлы в
+`supabase/migrations/**`, Supabase сам применяет новые миграции к облачной
+базе — ровно то же самое, что раньше делал `supabase db push` руками. Первое
+применение (всей текущей схемы) Supabase тоже сделает сам при подключении
+интеграции — отдельно гонять `db push` с ноутбука не требуется.
 
-Дальше при каждом пуше в `main`, затрагивающем `supabase/migrations/**`,
-workflow сам приме́нит новые миграции к облачной базе. Ручной `supabase db
-push` больше не нужен. Запустить вручную (например, для первого раза вместо
-шага 1.2) можно через вкладку **Actions → Deploy Supabase migrations → Run
-workflow**.
+Проверьте после первого прогона, что бакет `activity-photos` создался
+(Storage → Buckets) — он идёт миграцией `00000000000004_storage.sql`.
 
 ## 3. VAPID-ключи (если ещё не сгенерированы)
 
@@ -57,9 +48,9 @@ npx web-push generate-vapid-keys
 
    | Переменная | Значение |
    |---|---|
-   | `NEXT_PUBLIC_SUPABASE_URL` | из шага 1.5 |
-   | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | из шага 1.5 |
-   | `SUPABASE_SERVICE_ROLE_KEY` | из шага 1.5 (Sensitive) |
+   | `NEXT_PUBLIC_SUPABASE_URL` | из шага 1.3 |
+   | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | из шага 1.3 |
+   | `SUPABASE_SERVICE_ROLE_KEY` | из шага 1.3 (Sensitive) |
    | `NEXT_PUBLIC_VAPID_PUBLIC_KEY` | из шага 3 |
    | `VAPID_PRIVATE_KEY` | из шага 3 (Sensitive) |
    | `VAPID_SUBJECT` | `mailto:you@example.com` |
@@ -78,8 +69,10 @@ npx web-push generate-vapid-keys
 ## Что дальше — уже без ручных действий
 
 После разовой настройки выше рабочий цикл такой: правите код (сами или через
-меня) → пуш/мерж в `main` → Vercel деплоит приложение, GitHub Action (если
-менялись миграции) обновляет схему БД. Ничего вручную запускать не нужно.
+меня) → пуш/мерж в `main` → Vercel деплоит приложение, Supabase применяет
+новые миграции, если они были. Ничего вручную запускать не нужно, локальный
+Supabase CLI после этого нужен только для локальной разработки, не для
+деплоя.
 
 ## Что не входит в этот сервис
 
