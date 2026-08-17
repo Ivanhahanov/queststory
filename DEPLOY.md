@@ -1,39 +1,45 @@
 # Деплой: Supabase Cloud + Vercel
 
 Разовая ручная настройка ниже занимает ~15 минут. После неё деплой полностью
-автоматический: пуш в `main` → Vercel сам собирает и выкатывает приложение
-(встроенная git-интеграция), а миграции БД применяет встроенная GitHub-интеграция
-самого Supabase. Руками после настройки нужно только мержить PR — ни токенов,
-ни секретов, ни workflow-файлов заводить не пришлось.
+автоматический: пуш в `main` → Vercel сам собирает и выкатывает приложение,
+Supabase сам применяет новые миграции и сам держит ключи в Vercel актуальными.
+Руками после настройки нужно только мержить PR — ни токенов, ни секретов, ни
+workflow-файлов заводить не пришлось.
 
 ## 1. Supabase Cloud (разово)
 
 1. Создайте проект на [supabase.com](https://supabase.com/dashboard) (регион — ближе к игрокам, например Frankfurt).
 2. Включите анонимную авторизацию (по умолчанию выключена в облаке, в отличие от локального стенда):
    Authentication → Sign In / Providers → **Anonymous sign-ins** → Enable.
-3. Возьмите ключи в Project Settings → API:
-   - `Project URL` → `NEXT_PUBLIC_SUPABASE_URL`
-   - `anon public` → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `service_role` → `SUPABASE_SERVICE_ROLE_KEY` (секрет, не публиковать)
 
-## 2. Supabase ↔ GitHub интеграция — автодеплой миграций (разово)
+## 2. Vercel (разово)
 
-В Supabase-проекте: **Project Settings → Integrations → GitHub Connection**
-(или раздел «Integrations» в дашборде) → Connect. Авторизуйте GitHub-приложение
-Supabase, выберите этот репозиторий, ветку `main` как production branch, и
-путь к папке — по умолчанию корень репозитория, наши миграции лежат в
-`supabase/migrations`, ничего менять не нужно.
+Импортируйте репозиторий на [vercel.com/new](https://vercel.com/new) — это подключает git-интеграцию: дальше каждый пуш в `main` деплоится сам, а PR получают preview-ссылки. Env-переменные пока не добавляйте — большую часть за вас пропишет интеграция из шага 3.
 
-После этого при каждом пуше в `main`, где менялись файлы в
-`supabase/migrations/**`, Supabase сам применяет новые миграции к облачной
-базе — ровно то же самое, что раньше делал `supabase db push` руками. Первое
-применение (всей текущей схемы) Supabase тоже сделает сам при подключении
-интеграции — отдельно гонять `db push` с ноутбука не требуется.
+## 3. Supabase → Vercel — автосинхронизация ключей (разово)
 
-Проверьте после первого прогона, что бакет `activity-photos` создался
-(Storage → Buckets) — он идёт миграцией `00000000000004_storage.sql`.
+В дашборде Supabase: **Project Settings → Integrations → Vercel** (или через Vercel Marketplace → Supabase) → Connect, выберите проект в Vercel из шага 2.
 
-## 3. VAPID-ключи (если ещё не сгенерированы)
+Supabase сам создаст в этом Vercel-проекте переменные `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` и `SUPABASE_SERVICE_ROLE_KEY` (плюс пару лишних вроде `SUPABASE_JWT_SECRET`, которые мы не используем — не мешают) — именно под этими именами их и читает код. При ротации ключей в Supabase значения в Vercel обновятся тоже сами.
+
+Останутся переменные, не связанные с Supabase — их нужно добавить в Vercel руками (Project Settings → Environment Variables, для Production и Preview):
+
+| Переменная | Значение |
+|---|---|
+| `NEXT_PUBLIC_VAPID_PUBLIC_KEY` | из шага 5 |
+| `VAPID_PRIVATE_KEY` | из шага 5 (Sensitive) |
+| `VAPID_SUBJECT` | `mailto:you@example.com` |
+| `NEXT_PUBLIC_APP_URL` | боевой домен, например `https://queststory.vercel.app` — используется в ссылках/QR игроков, обновить после первого деплоя, когда домен известен, и передеплоить |
+
+## 4. Supabase → GitHub — автодеплой миграций (разово)
+
+В том же разделе: **Project Settings → Integrations → GitHub Connection** → Connect. Авторизуйте GitHub-приложение Supabase, выберите этот репозиторий и ветку `main` как production branch — путь к папке по умолчанию корень репозитория, наши миграции лежат в `supabase/migrations`, менять не нужно.
+
+После подключения Supabase применяет всю текущую схему сразу, а дальше — каждую новую миграцию автоматически при пуше в `main`. Локальный `supabase db push` для деплоя больше не нужен, CLI остаётся только для локальной разработки.
+
+Проверьте после первого прогона, что бакет `activity-photos` создался (Storage → Buckets) — он идёт миграцией `00000000000004_storage.sql`.
+
+## 5. VAPID-ключи (если ещё не сгенерированы)
 
 ```bash
 npx web-push generate-vapid-keys
@@ -41,25 +47,7 @@ npx web-push generate-vapid-keys
 
 `Public Key` → `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `Private Key` → `VAPID_PRIVATE_KEY`. Использовать те же ключи, что в текущем `.env.local`, можно и в проде — тогда не придётся ничего менять на стороне уже подписавшихся клиентов при повторных деплоях.
 
-## 4. Vercel (разово)
-
-1. Импортируйте репозиторий на [vercel.com/new](https://vercel.com/new) — это и есть подключение git-интеграции, дальше каждый пуш в `main` деплоится сам, а PR получают preview-ссылки.
-2. В Project Settings → Environment Variables добавьте (для Production и Preview):
-
-   | Переменная | Значение |
-   |---|---|
-   | `NEXT_PUBLIC_SUPABASE_URL` | из шага 1.3 |
-   | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | из шага 1.3 |
-   | `SUPABASE_SERVICE_ROLE_KEY` | из шага 1.3 (Sensitive) |
-   | `NEXT_PUBLIC_VAPID_PUBLIC_KEY` | из шага 3 |
-   | `VAPID_PRIVATE_KEY` | из шага 3 (Sensitive) |
-   | `VAPID_SUBJECT` | `mailto:you@example.com` |
-   | `NEXT_PUBLIC_APP_URL` | боевой домен, например `https://queststory.vercel.app` — используется в ссылках/QR игроков, обновить после первого деплоя, когда домен известен |
-
-3. Деплой запустится автоматически. Команда сборки уже задана в `package.json` (`next build --webpack`) — она обходит несовместимость Turbopack с PWA-плагином, трогать не нужно.
-4. После первого деплоя, если домен отличается от угаданного заранее — обновите `NEXT_PUBLIC_APP_URL` и сделайте Redeploy, иначе QR-коды и ссылки-приглашения будут вести на неверный адрес.
-
-## 5. Проверка после деплоя
+## 6. Проверка после деплоя
 
 - Зарегистрировать аккаунт ведущего на `/login`, создать тестовую игру, раздать роль себе, открыть ссылку в приватном окне — весь путь должен работать так же, как локально.
 - **PWA на iPhone**: Safari → открыть ссылку игрока → «Поделиться» → «На экран Домой» → открыть с домашнего экрана → разрешить уведомления. Только так на iOS работает push.
@@ -69,10 +57,9 @@ npx web-push generate-vapid-keys
 ## Что дальше — уже без ручных действий
 
 После разовой настройки выше рабочий цикл такой: правите код (сами или через
-меня) → пуш/мерж в `main` → Vercel деплоит приложение, Supabase применяет
-новые миграции, если они были. Ничего вручную запускать не нужно, локальный
-Supabase CLI после этого нужен только для локальной разработки, не для
-деплоя.
+меня) → пуш/мерж в `main` → Vercel деплоит приложение с актуальными ключами
+от Supabase, Supabase применяет новые миграции, если они были. Ничего вручную
+запускать не нужно.
 
 ## Что не входит в этот сервис
 
