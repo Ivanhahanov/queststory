@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { gameThemeStyle } from "@/lib/theme-color";
 import { ThemeColorSync } from "@/components/theme-color-sync";
 import { GameNavTabs } from "./game-nav-tabs";
+import { GameTitleHeader } from "./game-title-header";
 
 export default async function GameLayout({
   children,
@@ -33,7 +34,7 @@ export default async function GameLayout({
             <Button variant="ghost" size="icon" nativeButton={false} render={<Link href="/games" />}>
               <ArrowLeft />
             </Button>
-            <h1 className="truncate text-lg font-semibold">{game.title}</h1>
+            <GameTitleHeader gameId={game.id} initialTitle={game.title} />
           </div>
           <GameNavTabs gameId={game.id} />
         </div>

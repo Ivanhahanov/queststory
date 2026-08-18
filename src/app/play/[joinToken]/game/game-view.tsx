@@ -104,7 +104,9 @@ export function GameView({
           const message = payload.new as Message;
           setMessages((prev) => {
             if (prev.some((m) => m.id === message.id)) return prev;
-            toast("Новое сообщение от ведущего", { description: message.body });
+            toast(message.sender === "system" ? message.body : "Новое сообщение от ведущего", {
+              description: message.sender === "system" ? undefined : message.body,
+            });
             navigator.vibrate?.(200);
             return [message, ...prev];
           });

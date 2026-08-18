@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Globe2, Plus, Trash2 } from "lucide-react";
 import { useSupabaseClient } from "@/hooks/use-supabase";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -44,6 +46,7 @@ export function RoleEditorDialog({
   onDeleteRole?: () => void;
 }) {
   const supabase = useSupabaseClient();
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   async function patchRole(update: Partial<Role>) {
     if (!role) return;
@@ -79,7 +82,7 @@ export function RoleEditorDialog({
       <DialogContent className="flex max-h-[85vh] flex-col sm:max-w-lg">
         <DialogHeader>
           {role ? (
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-3 pr-8">
               <div className="flex shrink-0 flex-col items-center gap-1.5">
                 <div className="flex size-16 items-center justify-center overflow-hidden rounded-2xl border-2" style={{ borderColor: role.color }}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -91,11 +94,6 @@ export function RoleEditorDialog({
                 <DialogTitle>Роль</DialogTitle>
                 <DialogDescription className="sr-only">Настройки роли и её целей</DialogDescription>
               </div>
-              {onDeleteRole && (
-                <Button variant="ghost" size="icon" onClick={onDeleteRole}>
-                  <Trash2 />
-                </Button>
-              )}
             </div>
           ) : (
             <div className="flex items-center gap-3">
@@ -146,7 +144,7 @@ export function RoleEditorDialog({
                     aria-label={color}
                     onClick={() => patchRole({ color })}
                     className={cn(
-                      "size-8 shrink-0 rounded-full ring-offset-2 ring-offset-card transition-transform hover:scale-110",
+                      "size-8 shrink-0 rounded-full ring-offset-2 ring-offset-popover transition-transform hover:scale-110",
                       role.color === color && "ring-2 ring-foreground",
                     )}
                     style={{ backgroundColor: color }}
@@ -173,7 +171,47 @@ export function RoleEditorDialog({
             </div>
           </div>
         </div>
+
+        {role && onDeleteRole && (
+          <DialogFooter className="sm:justify-start">
+            <Button
+              type="button"
+              variant="ghost"
+              className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+              onClick={() => setConfirmDeleteOpen(true)}
+            >
+              <Trash2 /> Удалить роль
+            </Button>
+          </DialogFooter>
+        )}
       </DialogContent>
+
+      {role && onDeleteRole && (
+        <Dialog open={confirmDeleteOpen} onOpenChange={setConfirmDeleteOpen}>
+          <DialogContent className="sm:max-w-sm">
+            <DialogHeader>
+              <DialogTitle>Удалить роль «{role.name}»?</DialogTitle>
+              <DialogDescription>
+                Все цели этой роли удалятся безвозвратно. Если роль уже назначена игроку, он её лишится.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setConfirmDeleteOpen(false)}>
+                Отмена
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  setConfirmDeleteOpen(false);
+                  onDeleteRole();
+                }}
+              >
+                <Trash2 /> Удалить
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </Dialog>
   );
 }

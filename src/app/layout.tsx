@@ -26,6 +26,12 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "Квестория",
   },
+  other: {
+    // Next 16 only emits the standardized `mobile-web-app-capable` from
+    // `appleWebApp.capable` — Safari still ignores that and needs the legacy
+    // apple-prefixed tag to launch installed PWAs without browser chrome.
+    "apple-mobile-web-app-capable": "yes",
+  },
   icons: {
     icon: [
       { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },

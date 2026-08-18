@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import type { Game, Round, Role, Goal } from "@/lib/types";
-import { GameTitleEditor } from "./game-title-editor";
 import { StoryTab } from "./story-tab";
 import { RoundsTab } from "./rounds-tab";
 import { RolesTab } from "./roles-tab";
@@ -28,8 +27,6 @@ export function ConstructorShell({
 
   return (
     <div className="space-y-5">
-      <GameTitleEditor game={game} onChange={setGame} />
-
       <Tabs defaultValue="story">
         <TabsList className="w-full justify-start overflow-x-auto">
           <TabsTrigger value="story">История</TabsTrigger>
