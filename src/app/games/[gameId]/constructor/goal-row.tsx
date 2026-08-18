@@ -4,6 +4,8 @@ import { Trash2 } from "lucide-react";
 import { useSupabaseClient } from "@/hooks/use-supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Goal, Round } from "@/lib/types";
@@ -67,6 +69,14 @@ export function GoalRow({
         rows={2}
         onBlur={(e) => patch({ description: e.target.value })}
       />
+      <Label className="flex w-fit items-center gap-2 text-xs text-muted-foreground">
+        <Switch
+          checked={goal.player_can_complete}
+          onCheckedChange={(v) => patch({ player_can_complete: v })}
+          size="sm"
+        />
+        Игрок может отметить сам
+      </Label>
     </div>
   );
 }

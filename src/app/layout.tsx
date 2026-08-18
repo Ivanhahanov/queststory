@@ -52,17 +52,21 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col bg-background">
         <TooltipProvider delay={200}>{children}</TooltipProvider>
         <Toaster
-          richColors
           position="top-center"
           theme="dark"
           offset="max(1rem, env(safe-area-inset-top))"
           toastOptions={{
-            classNames: {
-              toast:
-                "rounded-xl! border! border-border/60! bg-popover! text-popover-foreground! shadow-lg! backdrop-blur-sm!",
-              title: "font-medium!",
-              description: "text-muted-foreground!",
+            // sonner's dark theme defaults --normal-bg to pure black; setting
+            // these as inline style beats that CSS-variable-driven default
+            // without needing to fight specificity.
+            style: {
+              background: "var(--popover)",
+              border: "1px solid var(--border)",
+              color: "var(--popover-foreground)",
+              borderRadius: "var(--radius-xl)",
+              boxShadow: "0 10px 30px -8px rgb(0 0 0 / 0.45)",
             },
+            descriptionClassName: "text-muted-foreground",
           }}
         />
       </body>

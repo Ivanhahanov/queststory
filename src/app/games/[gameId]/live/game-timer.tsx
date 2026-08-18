@@ -22,6 +22,11 @@ export function GameTimer({ game, onChange }: { game: Game; onChange: (game: Gam
 
   useEffect(() => {
     if (!running) return;
+    // `now` can be stale from before a pause (the interval was torn down and
+    // stopped ticking) — resync immediately instead of waiting up to 1s for
+    // the first tick, otherwise elapsed briefly shows a wrong (usually lower)
+    // value right after resuming.
+    Promise.resolve().then(() => setNow(Date.now()));
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, [running]);

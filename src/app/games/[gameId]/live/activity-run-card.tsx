@@ -1,7 +1,7 @@
 "use client";
 
 import { QRCodeSVG } from "qrcode.react";
-import { Check, Square, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { useSupabaseClient } from "@/hooks/use-supabase";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,7 @@ export function ActivityRunCard({
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium">{template.name}</p>
         <Button variant="ghost" size="icon-sm" onClick={onCancel} title="Остановить">
-          <Square />
+          <X />
         </Button>
       </div>
 

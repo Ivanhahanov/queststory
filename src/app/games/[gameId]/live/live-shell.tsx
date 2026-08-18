@@ -88,7 +88,10 @@ export function LiveShell({
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "messages", filter: `game_id=eq.${game.id}` },
-        (payload) => setMessages((prev) => [payload.new as Message, ...prev]),
+        (payload) => {
+          const row = payload.new as Message;
+          setMessages((prev) => (prev.some((m) => m.id === row.id) ? prev : [row, ...prev]));
+        },
       )
       .on(
         "postgres_changes",
@@ -164,8 +167,10 @@ export function LiveShell({
         onProgressChange={(row) =>
           setProgress((prev) => (prev.some((p) => p.id === row.id) ? prev.map((p) => (p.id === row.id ? row : p)) : [...prev, row]))
         }
-        onMessageSent={(row) => setMessages((prev) => [row, ...prev])}
-        onEffectApplied={(row) => setPlayerEffects((prev) => [...prev, row])}
+        onMessageSent={(row) => setMessages((prev) => (prev.some((m) => m.id === row.id) ? prev : [row, ...prev]))}
+        onEffectApplied={(row) =>
+          setPlayerEffects((prev) => (prev.some((e) => e.id === row.id) ? prev : [...prev, row]))
+        }
       />
     </div>
   );

@@ -28,15 +28,17 @@ export default async function GameLayout({
     <div style={gameThemeStyle(game.accent_color)} className="flex min-h-full flex-1 flex-col">
       <ThemeColorSync color={game.accent_color} />
       <header className="border-b border-border/60">
-        <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-3">
-          <Button variant="ghost" size="icon" nativeButton={false} render={<Link href="/games" />}>
-            <ArrowLeft />
-          </Button>
-          <h1 className="truncate text-lg font-semibold">{game.title}</h1>
+        <div className="mx-auto max-w-5xl space-y-3 px-4 py-3">
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" nativeButton={false} render={<Link href="/games" />}>
+              <ArrowLeft />
+            </Button>
+            <h1 className="truncate text-lg font-semibold">{game.title}</h1>
+          </div>
+          <GameNavTabs gameId={game.id} />
         </div>
       </header>
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-5 pb-28">{children}</main>
-      <GameNavTabs gameId={game.id} />
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-5">{children}</main>
     </div>
   );
 }

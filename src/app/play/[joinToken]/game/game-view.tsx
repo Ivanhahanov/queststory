@@ -22,6 +22,7 @@ import { GoalsList } from "./goals-list";
 import { EffectsList } from "./effects-list";
 import { MessagesFeed } from "./messages-feed";
 import { PersonalActivities } from "./personal-activities";
+import { LeaveGameButton } from "./leave-game-button";
 import { NotificationsBanner } from "./notifications-banner";
 
 export function GameView({
@@ -101,9 +102,12 @@ export function GameView({
         { event: "INSERT", schema: "public", table: "messages", filter: `game_id=eq.${game.id}` },
         (payload) => {
           const message = payload.new as Message;
-          setMessages((prev) => [message, ...prev]);
-          toast("Новое сообщение от ведущего", { description: message.body });
-          navigator.vibrate?.(200);
+          setMessages((prev) => {
+            if (prev.some((m) => m.id === message.id)) return prev;
+            toast("Новое сообщение от ведущего", { description: message.body });
+            navigator.vibrate?.(200);
+            return [message, ...prev];
+          });
         },
       )
       .subscribe();
@@ -145,8 +149,11 @@ export function GameView({
       <RoundTimeline rounds={initialRounds} currentRoundId={game.current_round_id} />
       <EffectsList effects={effects} />
       <PersonalActivities gameId={game.id} playerId={player.id} />
-      <GoalsList goals={goals} lockedGoalIds={lockedGoalIds} />
+      <GoalsList playerId={player.id} goals={goals} lockedGoalIds={lockedGoalIds} />
       <MessagesFeed messages={messages} />
+      <div className="flex justify-center pt-2">
+        <LeaveGameButton player={player} />
+      </div>
     </div>
   );
 }

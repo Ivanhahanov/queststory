@@ -7,7 +7,6 @@ import { GameTitleEditor } from "./game-title-editor";
 import { StoryTab } from "./story-tab";
 import { RoundsTab } from "./rounds-tab";
 import { RolesTab } from "./roles-tab";
-import { GoalsTab } from "./goals-tab";
 import { EffectsTab } from "./effects-tab";
 import { ActivitiesTab } from "./activities-tab";
 
@@ -36,7 +35,6 @@ export function ConstructorShell({
           <TabsTrigger value="story">История</TabsTrigger>
           <TabsTrigger value="rounds">Раунды</TabsTrigger>
           <TabsTrigger value="roles">Роли</TabsTrigger>
-          <TabsTrigger value="goals">Цели</TabsTrigger>
           <TabsTrigger value="effects">Эффекты</TabsTrigger>
           <TabsTrigger value="activities">Активности</TabsTrigger>
         </TabsList>
@@ -48,10 +46,14 @@ export function ConstructorShell({
           <RoundsTab gameId={game.id} rounds={rounds} onChange={setRounds} />
         </TabsContent>
         <TabsContent value="roles" className="pt-4">
-          <RolesTab gameId={game.id} roles={roles} onChange={setRoles} />
-        </TabsContent>
-        <TabsContent value="goals" className="pt-4">
-          <GoalsTab gameId={game.id} goals={goals} roles={roles} rounds={rounds} onChange={setGoals} />
+          <RolesTab
+            gameId={game.id}
+            roles={roles}
+            goals={goals}
+            rounds={rounds}
+            onRolesChange={setRoles}
+            onGoalsChange={setGoals}
+          />
         </TabsContent>
         <TabsContent value="effects" className="pt-4">
           <EffectsTab gameId={game.id} />

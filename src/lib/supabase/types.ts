@@ -226,6 +226,7 @@ export type Database = {
           common_goal: string
           created_at: string
           current_round_id: string | null
+          current_round_started_at: string | null
           id: string
           owner_id: string
           status: string
@@ -242,6 +243,7 @@ export type Database = {
           common_goal?: string
           created_at?: string
           current_round_id?: string | null
+          current_round_started_at?: string | null
           id?: string
           owner_id: string
           status?: string
@@ -258,6 +260,7 @@ export type Database = {
           common_goal?: string
           created_at?: string
           current_round_id?: string | null
+          current_round_started_at?: string | null
           id?: string
           owner_id?: string
           status?: string
@@ -291,6 +294,7 @@ export type Database = {
           description: string
           game_id: string
           id: string
+          player_can_complete: boolean
           position: number
           role_id: string | null
           title: string
@@ -301,6 +305,7 @@ export type Database = {
           description?: string
           game_id: string
           id?: string
+          player_can_complete?: boolean
           position?: number
           role_id?: string | null
           title: string
@@ -311,6 +316,7 @@ export type Database = {
           description?: string
           game_id?: string
           id?: string
+          player_can_complete?: boolean
           position?: number
           role_id?: string | null
           title?: string
@@ -680,13 +686,19 @@ export type Database = {
           description: string
           goal_position: number
           id: string
+          player_can_complete: boolean
           role_id: string
           title: string
           unlock_round_id: string
         }[]
       }
+      goal_allows_player_complete: {
+        Args: { p_goal_id: string }
+        Returns: boolean
+      }
       is_game_owner: { Args: { p_game_id: string }; Returns: boolean }
       is_own_player: { Args: { p_player_id: string }; Returns: boolean }
+      leave_player: { Args: { p_player_id: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
