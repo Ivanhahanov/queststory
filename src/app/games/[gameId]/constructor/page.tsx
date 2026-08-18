@@ -1,5 +1,5 @@
-import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { assertFound } from "@/lib/supabase/assert-found";
 import { ConstructorShell } from "./constructor-shell";
 
 export default async function ConstructorPage({
@@ -10,14 +10,14 @@ export default async function ConstructorPage({
   const { gameId } = await params;
   const supabase = await createClient();
 
-  const [{ data: game }, { data: rounds }, { data: roles }, { data: goals }] = await Promise.all([
+  const [{ data: game, error }, { data: rounds }, { data: roles }, { data: goals }] = await Promise.all([
     supabase.from("games").select("*").eq("id", gameId).single(),
     supabase.from("rounds").select("*").eq("game_id", gameId).order("position"),
     supabase.from("roles").select("*").eq("game_id", gameId).order("created_at"),
     supabase.from("goals").select("*").eq("game_id", gameId).order("position"),
   ]);
 
-  if (!game) notFound();
+  assertFound(game, error);
 
   return (
     <ConstructorShell

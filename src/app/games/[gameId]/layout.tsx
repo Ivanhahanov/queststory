@@ -1,7 +1,7 @@
-import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { assertFound } from "@/lib/supabase/assert-found";
 import { Button } from "@/components/ui/button";
 import { gameThemeStyle } from "@/lib/theme-color";
 import { ThemeColorSync } from "@/components/theme-color-sync";
@@ -16,13 +16,13 @@ export default async function GameLayout({
 }) {
   const { gameId } = await params;
   const supabase = await createClient();
-  const { data: game } = await supabase
+  const { data: game, error } = await supabase
     .from("games")
     .select("id, title, accent_color")
     .eq("id", gameId)
     .single();
 
-  if (!game) notFound();
+  assertFound(game, error);
 
   return (
     <div style={gameThemeStyle(game.accent_color)} className="flex min-h-full flex-1 flex-col">
