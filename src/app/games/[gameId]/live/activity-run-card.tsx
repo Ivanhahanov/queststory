@@ -81,7 +81,7 @@ export function ActivityRunCard({
               );
             })}
           </div>
-          <Button size="sm" variant="secondary" onClick={onResolve}>
+          <Button variant="secondary" onClick={onResolve}>
             <Check /> Завершить голосование
           </Button>
         </div>

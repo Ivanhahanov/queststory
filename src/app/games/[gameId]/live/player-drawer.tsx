@@ -126,7 +126,10 @@ export function PlayerDrawer({
           {applicableGoals.map((goal) => {
             const done = progress.some((p) => p.player_id === player.id && p.goal_id === goal.id && p.completed);
             return (
-              <label key={goal.id} className="flex items-start gap-2.5 rounded-lg p-1.5 hover:bg-muted/50">
+              <label
+                key={goal.id}
+                className="flex min-h-11 items-center gap-2.5 rounded-lg px-2 py-2.5 hover:bg-muted/50"
+              >
                 <Checkbox checked={done} onCheckedChange={(v) => toggleGoal(goal, v === true)} className="mt-0.5" />
                 <span className="text-sm">{goal.title}</span>
               </label>
@@ -149,7 +152,7 @@ export function PlayerDrawer({
         <div className="space-y-2 px-4 pb-4">
           <h3 className="text-sm font-medium text-muted-foreground">Сообщение игроку</h3>
           <Textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Загляните под половицу…" rows={2} />
-          <Button size="sm" onClick={sendMessage} disabled={sending || !body.trim()}>
+          <Button onClick={sendMessage} disabled={sending || !body.trim()}>
             <Send /> Отправить
           </Button>
           {playerMessages.length > 0 && (

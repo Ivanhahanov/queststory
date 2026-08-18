@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useSupabaseClient } from "@/hooks/use-supabase";
+import { gameThemeStyle } from "@/lib/theme-color";
+import { ThemeColorSync } from "@/components/theme-color-sync";
+import { InstallAppBanner } from "@/components/install-app-banner";
 import type {
   Game,
   Message,
@@ -133,8 +136,10 @@ export function GameView({
     .reduce((sum, e) => sum + (e.value ?? 0), 0);
 
   return (
-    <div className="mx-auto max-w-lg space-y-5 p-4 pb-16">
+    <div style={gameThemeStyle(game.accent_color)} className="mx-auto max-w-lg space-y-5 p-4 pb-16">
+      <ThemeColorSync color={game.accent_color} />
       <RoleHeader role={role} displayName={player.display_name} points={points} />
+      <InstallAppBanner />
       <NotificationsBanner playerId={player.id} />
       <StorySection game={game} />
       <RoundTimeline rounds={initialRounds} currentRoundId={game.current_round_id} />

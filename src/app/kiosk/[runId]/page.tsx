@@ -4,6 +4,8 @@ import { use, useEffect, useState } from "react";
 import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { gameThemeStyle } from "@/lib/theme-color";
+import { ThemeColorSync } from "@/components/theme-color-sync";
 
 type KioskInfo = {
   status: string;
@@ -11,6 +13,7 @@ type KioskInfo = {
   name: string;
   instructions: string;
   options?: string[];
+  accentColor: string;
 };
 
 export default function KioskPage({ params }: { params: Promise<{ runId: string }> }) {
@@ -58,7 +61,11 @@ export default function KioskPage({ params }: { params: Promise<{ runId: string 
   }
 
   return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-8 p-6 text-center">
+    <main
+      style={gameThemeStyle(info.accentColor)}
+      className="flex flex-1 flex-col items-center justify-center gap-8 p-6 text-center"
+    >
+      <ThemeColorSync color={info.accentColor} />
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">{info.name}</h1>
         {info.instructions && <p className="max-w-md text-muted-foreground">{info.instructions}</p>}

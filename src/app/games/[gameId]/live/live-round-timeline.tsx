@@ -39,7 +39,7 @@ export function LiveRoundTimeline({
               key={round.id}
               onClick={() => setRound(round.id)}
               className={cn(
-                "shrink-0 rounded-lg border px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors",
+                "flex h-11 shrink-0 items-center rounded-lg border px-4 text-sm font-medium whitespace-nowrap transition-colors",
                 active
                   ? "border-primary bg-primary/15 text-primary"
                   : "border-border/60 text-muted-foreground hover:border-primary/40 hover:text-foreground",

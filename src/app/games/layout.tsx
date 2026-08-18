@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
+import { InstallAppButton } from "@/components/install-app-button";
 import { signOut } from "@/app/login/actions";
 
 export default async function GamesLayout({ children }: { children: React.ReactNode }) {
@@ -16,7 +17,8 @@ export default async function GamesLayout({ children }: { children: React.ReactN
           <Link href="/games" className="text-lg font-semibold tracking-tight text-primary">
             Квестория
           </Link>
-          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <InstallAppButton />
             <span className="hidden sm:inline">{user?.email}</span>
             <form action={signOut}>
               <Button type="submit" variant="ghost" size="sm">

@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { Shuffle, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { useSupabaseClient } from "@/hooks/use-supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,9 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DICEBEAR_STYLES, dicebearUrl, randomAvatarSeed } from "@/lib/dicebear";
+import { DICEBEAR_STYLES, dicebearUrl } from "@/lib/dicebear";
 import type { Role } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { AvatarPicker } from "./avatar-picker";
 
 const PALETTE = [
   "#e0973f",
@@ -34,13 +34,10 @@ export function RoleCard({
   onRemove: () => void;
 }) {
   const supabase = useSupabaseClient();
-  const [saving, setSaving] = useState(false);
 
   async function patch(update: Partial<Role>) {
-    setSaving(true);
     const { data } = await supabase.from("roles").update(update).eq("id", role.id).select().single();
     if (data) onChange(data);
-    setSaving(false);
   }
 
   return (
@@ -58,14 +55,11 @@ export function RoleCard({
               className="size-full"
             />
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={saving}
-            onClick={() => patch({ avatar_seed: randomAvatarSeed() })}
-          >
-            <Shuffle /> Другой
-          </Button>
+          <AvatarPicker
+            style={role.avatar_style}
+            currentSeed={role.avatar_seed}
+            onSelect={(seed) => patch({ avatar_seed: seed })}
+          />
         </div>
 
         <div className="flex-1 space-y-3">
@@ -104,7 +98,7 @@ export function RoleCard({
             onBlur={(e) => patch({ description: e.target.value })}
           />
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-2.5">
             {PALETTE.map((color) => (
               <button
                 key={color}
@@ -112,7 +106,7 @@ export function RoleCard({
                 aria-label={color}
                 onClick={() => patch({ color })}
                 className={cn(
-                  "size-5 rounded-full ring-offset-2 ring-offset-card transition-transform hover:scale-110",
+                  "size-8 shrink-0 rounded-full ring-offset-2 ring-offset-card transition-transform hover:scale-110",
                   role.color === color && "ring-2 ring-foreground",
                 )}
                 style={{ backgroundColor: color }}

@@ -114,7 +114,6 @@ export function EffectPicker({
       )}
 
       <Button
-        size="sm"
         variant="secondary"
         onClick={apply}
         disabled={!template || applying || (template.type === "goal_lock" && !targetGoalId)}

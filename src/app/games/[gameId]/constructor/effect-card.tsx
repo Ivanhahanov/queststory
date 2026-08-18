@@ -91,7 +91,7 @@ export function EffectCard({
           </div>
         )}
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex flex-wrap items-center gap-2.5">
           {PALETTE.map((color) => (
             <button
               key={color}
@@ -99,7 +99,7 @@ export function EffectCard({
               aria-label={color}
               onClick={() => patch({ color })}
               className={cn(
-                "size-5 rounded-full ring-offset-2 ring-offset-card transition-transform hover:scale-110",
+                "size-8 shrink-0 rounded-full ring-offset-2 ring-offset-card transition-transform hover:scale-110",
                 effect.color === color && "ring-2 ring-foreground",
               )}
               style={{ backgroundColor: color }}

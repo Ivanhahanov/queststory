@@ -221,6 +221,7 @@ export type Database = {
       }
       games: {
         Row: {
+          accent_color: string
           active_activity_run_id: string | null
           common_goal: string
           created_at: string
@@ -236,6 +237,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          accent_color?: string
           active_activity_run_id?: string | null
           common_goal?: string
           created_at?: string
@@ -251,6 +253,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          accent_color?: string
           active_activity_run_id?: string | null
           common_goal?: string
           created_at?: string

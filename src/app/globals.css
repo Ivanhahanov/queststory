@@ -49,74 +49,77 @@
 }
 
 :root {
-  /* Квестория: тёплый янтарный акцент на глубоком тёмно-фиолетовом фоне.
+  /* Квестория: нейтральная база, акцент задаётся за игру (gameThemeStyle).
      Светлая тема — запасной вариант, приложение по умолчанию открывается в тёмной. */
-  --background: oklch(0.99 0.004 80);
-  --foreground: oklch(0.19 0.03 290);
+  --background: oklch(0.99 0.002 270);
+  --foreground: oklch(0.2 0.01 270);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.19 0.03 290);
+  --card-foreground: oklch(0.2 0.01 270);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.19 0.03 290);
-  --primary: oklch(0.74 0.16 65);
-  --primary-foreground: oklch(0.16 0.03 290);
-  --secondary: oklch(0.94 0.015 290);
-  --secondary-foreground: oklch(0.24 0.05 290);
-  --muted: oklch(0.94 0.015 290);
-  --muted-foreground: oklch(0.5 0.03 290);
+  --popover-foreground: oklch(0.2 0.01 270);
+  --primary: oklch(0.55 0.16 275);
+  --primary-foreground: oklch(0.98 0.005 270);
+  --secondary: oklch(0.95 0.006 270);
+  --secondary-foreground: oklch(0.25 0.01 270);
+  --muted: oklch(0.95 0.006 270);
+  --muted-foreground: oklch(0.5 0.01 270);
   --accent: oklch(0.55 0.16 300);
   --accent-foreground: oklch(0.98 0.01 80);
   --destructive: oklch(0.6 0.22 25);
-  --border: oklch(0.89 0.02 290);
-  --input: oklch(0.89 0.02 290);
-  --ring: oklch(0.74 0.16 65);
-  --chart-1: oklch(0.74 0.16 65);
+  --border: oklch(0.9 0.006 270);
+  --input: oklch(0.9 0.006 270);
+  --ring: oklch(0.55 0.16 275);
+  --chart-1: oklch(0.55 0.16 275);
   --chart-2: oklch(0.6 0.15 300);
   --chart-3: oklch(0.65 0.18 25);
   --chart-4: oklch(0.6 0.14 160);
   --chart-5: oklch(0.55 0.12 240);
   --radius: 0.85rem;
-  --sidebar: oklch(0.97 0.01 290);
-  --sidebar-foreground: oklch(0.19 0.03 290);
-  --sidebar-primary: oklch(0.74 0.16 65);
-  --sidebar-primary-foreground: oklch(0.16 0.03 290);
-  --sidebar-accent: oklch(0.94 0.015 290);
-  --sidebar-accent-foreground: oklch(0.24 0.05 290);
-  --sidebar-border: oklch(0.89 0.02 290);
-  --sidebar-ring: oklch(0.74 0.16 65);
+  --sidebar: oklch(0.97 0.003 270);
+  --sidebar-foreground: oklch(0.2 0.01 270);
+  --sidebar-primary: oklch(0.55 0.16 275);
+  --sidebar-primary-foreground: oklch(0.98 0.005 270);
+  --sidebar-accent: oklch(0.95 0.006 270);
+  --sidebar-accent-foreground: oklch(0.25 0.01 270);
+  --sidebar-border: oklch(0.9 0.006 270);
+  --sidebar-ring: oklch(0.55 0.16 275);
 }
 
 .dark {
-  --background: oklch(0.16 0.025 288);
-  --foreground: oklch(0.96 0.01 80);
-  --card: oklch(0.21 0.03 288);
-  --card-foreground: oklch(0.96 0.01 80);
-  --popover: oklch(0.19 0.03 288);
-  --popover-foreground: oklch(0.96 0.01 80);
-  --primary: oklch(0.78 0.15 65);
-  --primary-foreground: oklch(0.16 0.03 288);
-  --secondary: oklch(0.29 0.035 288);
-  --secondary-foreground: oklch(0.96 0.01 80);
-  --muted: oklch(0.26 0.03 288);
-  --muted-foreground: oklch(0.68 0.03 280);
-  --accent: oklch(0.62 0.17 300);
-  --accent-foreground: oklch(0.97 0.01 80);
+  /* Нейтральный тёмный слейт с едва уловимым холодным оттенком — акцент
+     (--primary/--ring/--sidebar-primary) переопределяется на уровне игры
+     через gameThemeStyle(), см. src/lib/theme-color.ts. */
+  --background: oklch(0.15 0.008 270);
+  --foreground: oklch(0.95 0.005 270);
+  --card: oklch(0.19 0.01 270);
+  --card-foreground: oklch(0.95 0.005 270);
+  --popover: oklch(0.18 0.01 270);
+  --popover-foreground: oklch(0.95 0.005 270);
+  --primary: oklch(0.7 0.14 275);
+  --primary-foreground: oklch(0.98 0.005 270);
+  --secondary: oklch(0.25 0.01 270);
+  --secondary-foreground: oklch(0.95 0.005 270);
+  --muted: oklch(0.23 0.01 270);
+  --muted-foreground: oklch(0.65 0.02 270);
+  --accent: oklch(0.62 0.15 300);
+  --accent-foreground: oklch(0.97 0.005 270);
   --destructive: oklch(0.7 0.19 22);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.78 0.15 65);
-  --chart-1: oklch(0.78 0.15 65);
-  --chart-2: oklch(0.62 0.17 300);
+  --border: oklch(1 0 0 / 8%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.7 0.14 275);
+  --chart-1: oklch(0.7 0.14 275);
+  --chart-2: oklch(0.62 0.15 300);
   --chart-3: oklch(0.7 0.18 25);
   --chart-4: oklch(0.65 0.15 160);
   --chart-5: oklch(0.6 0.12 240);
-  --sidebar: oklch(0.19 0.03 288);
-  --sidebar-foreground: oklch(0.96 0.01 80);
-  --sidebar-primary: oklch(0.78 0.15 65);
-  --sidebar-primary-foreground: oklch(0.16 0.03 288);
-  --sidebar-accent: oklch(0.26 0.03 288);
-  --sidebar-accent-foreground: oklch(0.96 0.01 80);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.78 0.15 65);
+  --sidebar: oklch(0.18 0.01 270);
+  --sidebar-foreground: oklch(0.95 0.005 270);
+  --sidebar-primary: oklch(0.7 0.14 275);
+  --sidebar-primary-foreground: oklch(0.98 0.005 270);
+  --sidebar-accent: oklch(0.23 0.01 270);
+  --sidebar-accent-foreground: oklch(0.95 0.005 270);
+  --sidebar-border: oklch(1 0 0 / 8%);
+  --sidebar-ring: oklch(0.7 0.14 275);
 }
 
 @layer base {
@@ -128,13 +131,5 @@
   }
   html {
     @apply font-sans;
-  }
-}
-
-@layer utilities {
-  .bg-quest-glow {
-    background-image:
-      radial-gradient(circle at 15% -10%, oklch(0.62 0.17 300 / 25%), transparent 55%),
-      radial-gradient(circle at 100% 0%, oklch(0.78 0.15 65 / 12%), transparent 45%);
   }
 }

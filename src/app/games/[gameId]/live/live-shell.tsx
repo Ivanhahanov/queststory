@@ -1,10 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { ArrowLeft, Users } from "lucide-react";
 import { useSupabaseClient } from "@/hooks/use-supabase";
-import { Button } from "@/components/ui/button";
 import type {
   ActivityTemplate,
   EffectTemplate,
@@ -117,21 +114,6 @@ export function LiveShell({
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" nativeButton={false} render={<Link href={`/games/${game.id}/constructor`} />}>
-            <ArrowLeft />
-          </Button>
-          <div className="min-w-0">
-            <h1 className="truncate text-xl font-semibold">{game.title}</h1>
-            <p className="text-sm text-muted-foreground">Живая игра</p>
-          </div>
-        </div>
-        <Button variant="outline" nativeButton={false} render={<Link href={`/games/${game.id}/distribute`} />}>
-          <Users /> Раздача ролей
-        </Button>
-      </div>
-
       <GameTimer game={game} onChange={setGame} />
       <LiveRoundTimeline game={game} rounds={rounds} onChange={setGame} />
 

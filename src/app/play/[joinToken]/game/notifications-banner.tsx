@@ -1,19 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bell, Share, X } from "lucide-react";
+import { Bell, X } from "lucide-react";
 import { useSupabaseClient } from "@/hooks/use-supabase";
+import { useInstallPrompt } from "@/hooks/use-install-prompt";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { isIos, isStandalone, urlBase64ToUint8Array } from "@/lib/push-client";
+import { urlBase64ToUint8Array } from "@/lib/push-client";
 
 const DISMISS_KEY = "qs-push-banner-dismissed";
 
-type Mode = "hidden" | "ios-install" | "subscribe";
-
 export function NotificationsBanner({ playerId }: { playerId: string }) {
   const supabase = useSupabaseClient();
-  const [mode, setMode] = useState<Mode>("hidden");
+  const { isIos, isStandalone } = useInstallPrompt();
+  const [visible, setVisible] = useState(false);
   const [busy, setBusy] = useState(false);
 
   async function registerSubscription() {
@@ -31,6 +31,10 @@ export function NotificationsBanner({ playerId }: { playerId: string }) {
   }
 
   useEffect(() => {
+    // На iOS push вообще не работает вне standalone-режима — баннер об этом
+    // показывает InstallAppBanner, здесь просить разрешение ещё рано.
+    if (isIos && !isStandalone) return;
+
     Promise.resolve().then(async () => {
       if (!("serviceWorker" in navigator) || !("PushManager" in window)) return;
 
@@ -40,14 +44,14 @@ export function NotificationsBanner({ playerId }: { playerId: string }) {
       }
       if (Notification.permission === "denied" || localStorage.getItem(DISMISS_KEY)) return;
 
-      setMode(isIos() && !isStandalone() ? "ios-install" : "subscribe");
+      setVisible(true);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isIos, isStandalone]);
 
   function dismiss() {
     localStorage.setItem(DISMISS_KEY, "1");
-    setMode("hidden");
+    setVisible(false);
   }
 
   async function subscribe() {
@@ -61,30 +65,18 @@ export function NotificationsBanner({ playerId }: { playerId: string }) {
     }
   }
 
-  if (mode === "hidden") return null;
+  if (!visible) return null;
 
   return (
     <Card className="border-accent/40 bg-accent/10">
       <CardContent className="flex items-start gap-3 text-sm">
-        {mode === "ios-install" ? (
-          <>
-            <Share className="mt-0.5 size-4 shrink-0 text-accent" />
-            <p className="flex-1">
-              Чтобы получать уведомления, добавьте страницу на экран «Домой»: нажмите «Поделиться» → «На экран
-              Домой».
-            </p>
-          </>
-        ) : (
-          <>
-            <Bell className="mt-0.5 size-4 shrink-0 text-accent" />
-            <div className="flex-1 space-y-2">
-              <p>Включите уведомления, чтобы не пропустить сообщения и эффекты от ведущего.</p>
-              <Button size="sm" onClick={subscribe} disabled={busy}>
-                Включить
-              </Button>
-            </div>
-          </>
-        )}
+        <Bell className="mt-0.5 size-4 shrink-0 text-accent" />
+        <div className="flex-1 space-y-2">
+          <p>Включите уведомления, чтобы не пропустить сообщения и эффекты от ведущего.</p>
+          <Button onClick={subscribe} disabled={busy}>
+            Включить
+          </Button>
+        </div>
         <Button variant="ghost" size="icon-sm" onClick={dismiss}>
           <X />
         </Button>

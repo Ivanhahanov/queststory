@@ -36,7 +36,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#241a3d",
+  themeColor: "#181b20",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -49,9 +49,22 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="ru"
       className={`dark ${golosText.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background bg-quest-glow">
+      <body className="min-h-full flex flex-col bg-background">
         <TooltipProvider delay={200}>{children}</TooltipProvider>
-        <Toaster richColors position="top-center" theme="dark" />
+        <Toaster
+          richColors
+          position="top-center"
+          theme="dark"
+          offset="max(1rem, env(safe-area-inset-top))"
+          toastOptions={{
+            classNames: {
+              toast:
+                "rounded-xl! border! border-border/60! bg-popover! text-popover-foreground! shadow-lg! backdrop-blur-sm!",
+              title: "font-medium!",
+              description: "text-muted-foreground!",
+            },
+          }}
+        />
       </body>
     </html>
   );

@@ -37,7 +37,7 @@ export function GameTitleEditor({
       onKeyDown={(e) => {
         if (e.key === "Enter") e.currentTarget.blur();
       }}
-      className="rounded-md border border-transparent bg-transparent px-1 text-xl font-semibold outline-none hover:border-border focus:border-ring focus:bg-card"
+      className="w-full rounded-md border border-transparent bg-transparent px-1 py-1 text-xl font-semibold outline-none hover:border-border focus:border-ring focus:bg-card"
     />
   );
 }

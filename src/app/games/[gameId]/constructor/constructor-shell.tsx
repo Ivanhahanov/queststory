@@ -1,10 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { ArrowLeft, Users, Radio } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import type { Game, Round, Role, Goal } from "@/lib/types";
 import { GameTitleEditor } from "./game-title-editor";
 import { StoryTab } from "./story-tab";
@@ -31,27 +28,8 @@ export function ConstructorShell({
   const [goals, setGoals] = useState(initialGoals);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" nativeButton={false} render={<Link href="/games" />}>
-            <ArrowLeft />
-          </Button>
-          <GameTitleEditor game={game} onChange={setGame} />
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            nativeButton={false}
-            render={<Link href={`/games/${game.id}/distribute`} />}
-          >
-            <Users /> Раздача ролей
-          </Button>
-          <Button nativeButton={false} render={<Link href={`/games/${game.id}/live`} />}>
-            <Radio /> Живая игра
-          </Button>
-        </div>
-      </div>
+    <div className="space-y-5">
+      <GameTitleEditor game={game} onChange={setGame} />
 
       <Tabs defaultValue="story">
         <TabsList className="w-full justify-start overflow-x-auto">
