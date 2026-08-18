@@ -19,11 +19,12 @@ export const DICEBEAR_STYLES = [
 export type DicebearStyle = (typeof DICEBEAR_STYLES)[number]["id"];
 
 export function dicebearUrl(style: string, seed: string, backgroundColor?: string) {
-  const params = new URLSearchParams({ seed });
+  const params = new URLSearchParams();
   if (backgroundColor) {
     params.set("backgroundColor", backgroundColor.replace("#", ""));
   }
-  return `https://api.dicebear.com/9.x/${style}/svg?${params.toString()}`;
+  const qs = params.toString();
+  return `/api/avatar/${style}/${encodeURIComponent(seed)}.svg${qs ? `?${qs}` : ""}`;
 }
 
 export function randomAvatarSeed() {
