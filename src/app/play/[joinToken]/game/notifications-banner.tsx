@@ -2,11 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { Bell, X } from "lucide-react";
+import { toast } from "sonner";
 import { useSupabaseClient } from "@/hooks/use-supabase";
 import { useInstallPrompt } from "@/hooks/use-install-prompt";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { urlBase64ToUint8Array } from "@/lib/push-client";
+
+// NEXT_PUBLIC_-переменная инлайнится сборщиком в билд-тайм — если её не задать
+// в окружении Vercel (Production), здесь останется undefined и подписка будет
+// молча падать на каждом устройстве. Лучше не звать pushManager.subscribe()
+// вовсе, чем предлагать игроку разрешение на уведомления, которые не заведутся.
+const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
 
 const DISMISS_KEY = "qs-push-banner-dismissed";
 
@@ -22,7 +29,7 @@ export function NotificationsBanner({ playerId }: { playerId: string }) {
       (await registration.pushManager.getSubscription()) ??
       (await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!),
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY!),
       }));
     const json = subscription.toJSON();
     await supabase
@@ -31,6 +38,10 @@ export function NotificationsBanner({ playerId }: { playerId: string }) {
   }
 
   useEffect(() => {
+    if (!VAPID_PUBLIC_KEY) {
+      console.error("NEXT_PUBLIC_VAPID_PUBLIC_KEY не задан — push-уведомления отключены на этом деплое.");
+      return;
+    }
     // На iOS push вообще не работает вне standalone-режима — баннер об этом
     // показывает InstallAppBanner, здесь просить разрешение ещё рано.
     if (isIos && !isStandalone) return;
@@ -39,7 +50,7 @@ export function NotificationsBanner({ playerId }: { playerId: string }) {
       if (!("serviceWorker" in navigator) || !("PushManager" in window)) return;
 
       if (Notification.permission === "granted") {
-        registerSubscription().catch(() => {});
+        registerSubscription().catch((err) => console.error("Не удалось подписаться на push:", err));
         return;
       }
       if (Notification.permission === "denied" || localStorage.getItem(DISMISS_KEY)) return;
@@ -58,7 +69,13 @@ export function NotificationsBanner({ playerId }: { playerId: string }) {
     setBusy(true);
     try {
       const permission = await Notification.requestPermission();
-      if (permission === "granted") await registerSubscription();
+      if (permission === "granted") {
+        await registerSubscription();
+        toast("Уведомления включены");
+      }
+    } catch (err) {
+      console.error("Не удалось подписаться на push:", err);
+      toast.error("Не удалось включить уведомления — попробуйте ещё раз позже");
     } finally {
       dismiss();
       setBusy(false);

@@ -54,7 +54,7 @@ export function AvatarPicker({
           <DialogTitle>Выберите аватар</DialogTitle>
         </DialogHeader>
 
-        <Tabs defaultValue="random" className="flex-1 overflow-y-auto">
+        <Tabs defaultValue="random" className="-mx-4 flex-1 overflow-y-auto px-4">
           <TabsList className={cn("w-full", canCustomize ? "grid grid-cols-2" : "grid grid-cols-1")}>
             <TabsTrigger value="random">Случайно</TabsTrigger>
             {canCustomize && <TabsTrigger value="custom">Настроить</TabsTrigger>}

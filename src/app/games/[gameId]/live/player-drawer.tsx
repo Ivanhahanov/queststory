@@ -125,7 +125,7 @@ export function PlayerDrawer({
           </div>
         </DialogHeader>
 
-        <div className="flex-1 space-y-5 overflow-y-auto">
+        <div className="-mx-4 flex-1 space-y-5 overflow-y-auto px-4">
           <div className="space-y-1">
             <h3 className="text-sm font-medium text-muted-foreground">Цели</h3>
             {applicableGoals.length === 0 && <p className="text-sm text-muted-foreground">Нет целей</p>}
