@@ -1,0 +1,46 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="26%" cy="14%" r="100%">
+      <stop offset="0%" stop-color="#1a2420"/>
+      <stop offset="60%" stop-color="#0f1613"/>
+      <stop offset="100%" stop-color="#080b09"/>
+    </radialGradient>
+    <linearGradient id="mark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5eeba0"/>
+      <stop offset="100%" stop-color="#12a866"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+
+  <!-- Same mark as icon-source.svg, scaled to ~70% and re-centered so it stays
+       inside the ~80% "safe zone" circle Android/adaptive-icon masks crop to. -->
+  <g transform="translate(256 256) scale(0.7) translate(-256 -256)">
+    <g transform="translate(256 286)">
+      <path d="M -100 -35 L -150 -152 L -32 -78 Z" fill="url(#mark)"/>
+      <path d="M 100 -35 L 150 -152 L 32 -78 Z" fill="url(#mark)"/>
+      <path d="M -104 -55 L -132 -128 L -58 -80 Z" fill="#080b09" opacity="0.55"/>
+      <path d="M 104 -55 L 132 -128 L 58 -80 Z" fill="#080b09" opacity="0.55"/>
+
+      <ellipse cx="0" cy="20" rx="120" ry="108" fill="url(#mark)"/>
+
+      <ellipse cx="-44" cy="6" rx="15" ry="21" fill="#080b09" transform="rotate(-6 -44 6)"/>
+      <ellipse cx="44" cy="6" rx="15" ry="21" fill="#080b09" transform="rotate(6 44 6)"/>
+
+      <path d="M -13 44 L 13 44 L 0 60 Z" fill="#080b09"/>
+      <path d="M 0 58 L 0 70 C -14 70 -23 62 -27 53 M 0 70 C 14 70 23 62 27 53"
+            fill="none" stroke="#080b09" stroke-width="6" stroke-linecap="round"/>
+
+      <path d="M -128 30 L -186 20 M -128 46 L -188 50" stroke="url(#mark)" stroke-width="6" stroke-linecap="round" opacity="0.85"/>
+      <path d="M 128 30 L 186 20 M 128 46 L 188 50" stroke="url(#mark)" stroke-width="6" stroke-linecap="round" opacity="0.85"/>
+
+      <g transform="translate(0 -158)">
+        <path d="M -62 34 L -62 -6 L -34 18 L 0 -34 L 34 18 L 62 -6 L 62 34 Z" fill="url(#mark)"/>
+        <rect x="-62" y="30" width="124" height="16" rx="4" fill="url(#mark)"/>
+        <circle cx="-62" cy="-8" r="10" fill="url(#mark)"/>
+        <circle cx="0" cy="-36" r="12" fill="url(#mark)"/>
+        <circle cx="62" cy="-8" r="10" fill="url(#mark)"/>
+        <path d="M -8 38 L 0 26 L 8 38 L 0 46 Z" fill="#080b09" opacity="0.6"/>
+      </g>
+    </g>
+  </g>
+</svg>
