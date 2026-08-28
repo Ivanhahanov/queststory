@@ -17,6 +17,7 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DICEBEAR_STYLES, dicebearUrl } from "@/lib/dicebear";
+import { parseAvatarOptions } from "@/lib/avatar-options";
 import { cn } from "@/lib/utils";
 import type { Goal, Role, Round } from "@/lib/types";
 import { AvatarPicker } from "./avatar-picker";
@@ -86,9 +87,19 @@ export function RoleEditorDialog({
               <div className="flex shrink-0 flex-col items-center gap-1.5">
                 <div className="flex size-16 items-center justify-center overflow-hidden rounded-2xl border-2" style={{ borderColor: role.color }}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={dicebearUrl(role.avatar_style, role.avatar_seed)} alt={role.name} className="size-full" />
+                  <img
+                    src={dicebearUrl(role.avatar_style, role.avatar_seed, parseAvatarOptions(role.avatar_options))}
+                    alt={role.name}
+                    className="size-full"
+                  />
                 </div>
-                <AvatarPicker style={role.avatar_style} currentSeed={role.avatar_seed} onSelect={(seed) => patchRole({ avatar_seed: seed })} />
+                <AvatarPicker
+                  style={role.avatar_style}
+                  currentSeed={role.avatar_seed}
+                  options={parseAvatarOptions(role.avatar_options)}
+                  onSelect={(seed) => patchRole({ avatar_seed: seed, avatar_options: {} })}
+                  onSelectOptions={(options) => patchRole({ avatar_options: options })}
+                />
               </div>
               <div className="min-w-0 flex-1 self-center text-left">
                 <DialogTitle>Роль</DialogTitle>
@@ -113,7 +124,10 @@ export function RoleEditorDialog({
             <div className="space-y-4">
               <div className="grid gap-3 sm:grid-cols-2">
                 <Input defaultValue={role.name} placeholder="Имя роли" onBlur={(e) => patchRole({ name: e.target.value })} />
-                <Select value={role.avatar_style} onValueChange={(v) => patchRole({ avatar_style: v ?? undefined })}>
+                <Select
+                  value={role.avatar_style}
+                  onValueChange={(v) => patchRole({ avatar_style: v ?? undefined, avatar_options: {} })}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Стиль аватара">
                       {(value: string) => DICEBEAR_STYLES.find((s) => s.id === value)?.label ?? value}

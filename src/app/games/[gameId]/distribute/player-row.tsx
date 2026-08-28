@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { dicebearUrl } from "@/lib/dicebear";
+import { parseAvatarOptions } from "@/lib/avatar-options";
 import { inviteUrl } from "@/lib/invite-url";
 import type { Player, Role } from "@/lib/types";
 
@@ -41,7 +42,11 @@ export function PlayerRow({
         style={{ borderColor: role.color }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={dicebearUrl(role.avatar_style, role.avatar_seed)} alt="" className="size-full" />
+        <img
+          src={dicebearUrl(role.avatar_style, role.avatar_seed, parseAvatarOptions(role.avatar_options))}
+          alt=""
+          className="size-full"
+        />
       </div>
       <div className="min-w-0 flex-1">
         <p className="truncate font-medium">{role.name}</p>

@@ -18,10 +18,10 @@ export const DICEBEAR_STYLES = [
 
 export type DicebearStyle = (typeof DICEBEAR_STYLES)[number]["id"];
 
-export function dicebearUrl(style: string, seed: string, backgroundColor?: string) {
+export function dicebearUrl(style: string, seed: string, options?: Record<string, string>) {
   const params = new URLSearchParams();
-  if (backgroundColor) {
-    params.set("backgroundColor", backgroundColor.replace("#", ""));
+  for (const [key, value] of Object.entries(options ?? {})) {
+    if (value) params.set(key, key === "backgroundColor" ? value.replace("#", "") : value);
   }
   const qs = params.toString();
   return `/api/avatar/${style}/${encodeURIComponent(seed)}.svg${qs ? `?${qs}` : ""}`;

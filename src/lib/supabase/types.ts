@@ -576,6 +576,7 @@ export type Database = {
       }
       roles: {
         Row: {
+          avatar_options: Json
           avatar_seed: string
           avatar_style: string
           color: string
@@ -586,6 +587,7 @@ export type Database = {
           name: string
         }
         Insert: {
+          avatar_options?: Json
           avatar_seed?: string
           avatar_style?: string
           color?: string
@@ -596,6 +598,7 @@ export type Database = {
           name: string
         }
         Update: {
+          avatar_options?: Json
           avatar_seed?: string
           avatar_style?: string
           color?: string

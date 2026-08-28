@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { DICEBEAR_STYLES } from "@/lib/dicebear";
+import { sanitizeAvatarOptions } from "@/lib/avatar-options";
 
 // Аватарки раньше грузились напрямую с api.dicebear.com с каждого устройства
 // игрока — на плохом или заблокированном для внешних хостов интернете (в т.ч.
@@ -13,11 +14,19 @@ export async function GET(req: Request, { params }: { params: Promise<{ style: s
   }
 
   const seed = seedParam.replace(/\.svg$/, "");
-  const backgroundColor = new URL(req.url).searchParams.get("backgroundColor");
+  const searchParams = new URL(req.url).searchParams;
+  const backgroundColor = searchParams.get("backgroundColor");
+
+  const rawOptions: Record<string, string> = {};
+  for (const [key, value] of searchParams.entries()) {
+    if (key !== "backgroundColor") rawOptions[key] = value;
+  }
+  const featureOptions = sanitizeAvatarOptions(style, rawOptions);
 
   const upstream = new URL(`https://api.dicebear.com/9.x/${style}/svg`);
   upstream.searchParams.set("seed", seed);
   if (backgroundColor) upstream.searchParams.set("backgroundColor", backgroundColor);
+  for (const [key, value] of Object.entries(featureOptions)) upstream.searchParams.set(key, value);
 
   const res = await fetch(upstream, { next: { revalidate: 31536000 } });
   if (!res.ok) return NextResponse.json({ error: "upstream error" }, { status: 502 });

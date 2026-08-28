@@ -1,5 +1,6 @@
 import { Coins } from "lucide-react";
 import { dicebearUrl } from "@/lib/dicebear";
+import { parseAvatarOptions } from "@/lib/avatar-options";
 import type { Role } from "@/lib/types";
 
 export function RoleHeader({
@@ -19,7 +20,11 @@ export function RoleHeader({
       >
         {role ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={dicebearUrl(role.avatar_style, role.avatar_seed)} alt={role.name} className="size-full" />
+          <img
+            src={dicebearUrl(role.avatar_style, role.avatar_seed, parseAvatarOptions(role.avatar_options))}
+            alt={role.name}
+            className="size-full"
+          />
         ) : (
           <span className="text-xs text-muted-foreground">Роль скоро будет назначена</span>
         )}
