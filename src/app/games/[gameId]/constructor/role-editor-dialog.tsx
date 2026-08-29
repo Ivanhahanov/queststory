@@ -16,8 +16,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DICEBEAR_STYLES } from "@/lib/dicebear";
 import { parseAvatarOptions, roleAvatarUrl } from "@/lib/avatar-options";
 import { cn } from "@/lib/utils";
 import { CharacterCard } from "@/components/character-card";
@@ -117,6 +115,7 @@ export function RoleEditorDialog({
                   portraitUrl={role.portrait_url}
                   uploadingPortrait={uploadingPortrait}
                   onSelect={(seed) => patchRole({ avatar_seed: seed, avatar_options: {}, portrait_url: null })}
+                  onSelectStyle={(avatar_style) => patchRole({ avatar_style, avatar_options: {} })}
                   onSelectOptions={(options) => patchRole({ avatar_options: options })}
                   onUploadPortrait={uploadPortrait}
                   onRemovePortrait={() => patchRole({ portrait_url: null })}
@@ -143,26 +142,7 @@ export function RoleEditorDialog({
         <div className="-mx-4 flex-1 space-y-5 overflow-y-auto px-4">
           {role && (
             <div className="space-y-4">
-              <div className="grid gap-3 sm:grid-cols-2">
-                <Input defaultValue={role.name} placeholder="Имя роли" onBlur={(e) => patchRole({ name: e.target.value })} />
-                <Select
-                  value={role.avatar_style}
-                  onValueChange={(v) => patchRole({ avatar_style: v ?? undefined, avatar_options: {} })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Стиль аватара">
-                      {(value: string) => DICEBEAR_STYLES.find((s) => s.id === value)?.label ?? value}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {DICEBEAR_STYLES.map((s) => (
-                      <SelectItem key={s.id} value={s.id}>
-                        {s.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <Input defaultValue={role.name} placeholder="Имя роли" onBlur={(e) => patchRole({ name: e.target.value })} />
 
               <Textarea
                 defaultValue={role.description}
