@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, Crown, MessageCircle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import type { Message } from "@/lib/types";
 
 const COLLAPSED_COUNT = 5;
@@ -43,8 +44,10 @@ export function MessagesFeed({ messages, playerId }: { messages: Message[]; play
   if (messages.length === 0) return null;
 
   const isNew = (m: Message) => seenBefore !== null && new Date(m.created_at).getTime() > seenBefore;
-  const hiddenCount = messages.length - COLLAPSED_COUNT;
-  const visible = expanded || hiddenCount <= 0 ? messages : messages.slice(0, COLLAPSED_COUNT);
+  const systemMessages = messages.filter((m) => m.sender === "system");
+  const gmMessages = messages.filter((m) => m.sender !== "system");
+  const hiddenCount = gmMessages.length - COLLAPSED_COUNT;
+  const visibleGm = expanded || hiddenCount <= 0 ? gmMessages : gmMessages.slice(0, COLLAPSED_COUNT);
 
   return (
     <Card>
@@ -52,39 +55,55 @@ export function MessagesFeed({ messages, playerId }: { messages: Message[]; play
         <MessageCircle className="size-4 text-muted-foreground" />
         <CardTitle className="text-sm font-medium text-muted-foreground">Сообщения</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-2">
-        {visible.map((m) =>
-          m.sender === "system" ? (
-            <div key={m.id} className="flex items-center gap-2 px-1 py-1 text-xs text-muted-foreground">
-              <Sparkles className="size-3.5 shrink-0 text-accent" />
-              <span className="flex-1">{m.body}</span>
-              {isNew(m) && <span className="size-1.5 shrink-0 rounded-full bg-primary" aria-label="Новое" />}
-              <span className="shrink-0">{time(m)}</span>
+      <CardContent className="space-y-3">
+        {systemMessages.length > 0 && (
+          <div className="space-y-1.5">
+            <p className="px-1 text-[11px] font-medium tracking-wide text-muted-foreground uppercase">Уведомления</p>
+            <div className="space-y-1">
+              {systemMessages.map((m) => (
+                <div key={m.id} className="flex items-center gap-2 px-1 py-1 text-xs text-muted-foreground">
+                  <Sparkles className="size-3.5 shrink-0 text-accent" />
+                  <span className="flex-1">{m.body}</span>
+                  {isNew(m) && <span className="size-1.5 shrink-0 rounded-full bg-primary" aria-label="Новое" />}
+                  <span className="shrink-0">{time(m)}</span>
+                </div>
+              ))}
             </div>
-          ) : (
-            <div key={m.id} className="rounded-lg bg-muted/60 p-2.5 text-sm">
-              <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                <Crown className="size-3.5" />
-                Ведущий
-                {isNew(m) && <span className="size-1.5 rounded-full bg-primary" aria-label="Новое" />}
-              </div>
-              <p>{m.body}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{time(m)}</p>
-            </div>
-          ),
+          </div>
         )}
-        {hiddenCount > 0 && (
-          <Button variant="outline" size="sm" className="w-full" onClick={() => setExpanded((v) => !v)}>
-            {expanded ? (
-              <>
-                <ChevronUp /> Скрыть
-              </>
-            ) : (
-              <>
-                <ChevronDown /> Показать ещё {hiddenCount}
-              </>
-            )}
-          </Button>
+
+        {systemMessages.length > 0 && gmMessages.length > 0 && <Separator />}
+
+        {gmMessages.length > 0 && (
+          <div className="space-y-1.5">
+            <p className="px-1 text-[11px] font-medium tracking-wide text-muted-foreground uppercase">От ведущего</p>
+            <div className="space-y-2">
+              {visibleGm.map((m) => (
+                <div key={m.id} className="rounded-lg bg-muted/60 p-2.5 text-sm">
+                  <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                    <Crown className="size-3.5" />
+                    Ведущий
+                    {isNew(m) && <span className="size-1.5 rounded-full bg-primary" aria-label="Новое" />}
+                  </div>
+                  <p>{m.body}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{time(m)}</p>
+                </div>
+              ))}
+              {hiddenCount > 0 && (
+                <Button variant="outline" size="sm" className="w-full" onClick={() => setExpanded((v) => !v)}>
+                  {expanded ? (
+                    <>
+                      <ChevronUp /> Скрыть
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown /> Показать ещё {hiddenCount}
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
+          </div>
         )}
       </CardContent>
     </Card>
