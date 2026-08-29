@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { Eye, Globe2, ImagePlus, Plus, Trash2, X } from "lucide-react";
+import { useState } from "react";
+import { Eye, Globe2, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useSupabaseClient } from "@/hooks/use-supabase";
 import { Button } from "@/components/ui/button";
@@ -17,8 +17,8 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DICEBEAR_STYLES, dicebearUrl } from "@/lib/dicebear";
-import { parseAvatarOptions } from "@/lib/avatar-options";
+import { DICEBEAR_STYLES } from "@/lib/dicebear";
+import { parseAvatarOptions, roleAvatarUrl } from "@/lib/avatar-options";
 import { cn } from "@/lib/utils";
 import { CharacterCard } from "@/components/character-card";
 import type { Game, Goal, Role, Round } from "@/lib/types";
@@ -54,7 +54,6 @@ export function RoleEditorDialog({
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [uploadingPortrait, setUploadingPortrait] = useState(false);
-  const portraitInputRef = useRef<HTMLInputElement>(null);
 
   async function patchRole(update: Partial<Role>) {
     if (!role) return;
@@ -109,18 +108,18 @@ export function RoleEditorDialog({
               <div className="flex shrink-0 flex-col items-center gap-1.5">
                 <div className="flex size-16 items-center justify-center overflow-hidden rounded-2xl border-2" style={{ borderColor: role.color }}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={dicebearUrl(role.avatar_style, role.avatar_seed, parseAvatarOptions(role.avatar_options))}
-                    alt={role.name}
-                    className="size-full"
-                  />
+                  <img src={roleAvatarUrl(role)} alt={role.name} className="size-full object-cover" />
                 </div>
                 <AvatarPicker
                   style={role.avatar_style}
                   currentSeed={role.avatar_seed}
                   options={parseAvatarOptions(role.avatar_options)}
-                  onSelect={(seed) => patchRole({ avatar_seed: seed, avatar_options: {} })}
+                  portraitUrl={role.portrait_url}
+                  uploadingPortrait={uploadingPortrait}
+                  onSelect={(seed) => patchRole({ avatar_seed: seed, avatar_options: {}, portrait_url: null })}
                   onSelectOptions={(options) => patchRole({ avatar_options: options })}
+                  onUploadPortrait={uploadPortrait}
+                  onRemovePortrait={() => patchRole({ portrait_url: null })}
                 />
               </div>
               <div className="min-w-0 flex-1 self-center text-left">
@@ -188,34 +187,9 @@ export function RoleEditorDialog({
                 ))}
               </div>
 
-              <Separator />
-
-              <div className="space-y-2">
-                <h3 className="text-sm font-medium text-muted-foreground">Карточка персонажа</h3>
-                <p className="text-xs text-muted-foreground">
-                  Полноэкранная карточка, которую игрок открывает тапом по своей плашке — фото, история, цель и описание роли.
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <Button type="button" variant="outline" size="sm" onClick={() => portraitInputRef.current?.click()} disabled={uploadingPortrait}>
-                    <ImagePlus /> {role.portrait_url ? "Заменить фото" : "Загрузить фото"}
-                  </Button>
-                  {role.portrait_url && (
-                    <Button type="button" variant="ghost" size="sm" onClick={() => patchRole({ portrait_url: null })}>
-                      <X /> Убрать фото
-                    </Button>
-                  )}
-                  <Button type="button" variant="secondary" size="sm" onClick={() => setPreviewOpen(true)}>
-                    <Eye /> Предпросмотр карточки
-                  </Button>
-                  <input
-                    ref={portraitInputRef}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => e.target.files?.[0] && uploadPortrait(e.target.files[0])}
-                  />
-                </div>
-              </div>
+              <Button type="button" variant="secondary" size="sm" onClick={() => setPreviewOpen(true)}>
+                <Eye /> Предпросмотр карточки персонажа
+              </Button>
 
               <Separator />
             </div>

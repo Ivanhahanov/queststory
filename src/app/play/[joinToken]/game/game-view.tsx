@@ -16,6 +16,7 @@ import type {
   VisibleGoal,
 } from "@/lib/types";
 import { RoleHeader } from "./role-header";
+import { CommonGoalCard } from "./common-goal-card";
 import { RoundTimeline } from "./round-timeline";
 import { GoalsList } from "./goals-list";
 import { EffectsList } from "./effects-list";
@@ -152,6 +153,7 @@ export function GameView({
       />
       <InstallAppBanner playerId={player.id} />
       <NotificationsBanner playerId={player.id} />
+      <CommonGoalCard commonGoal={game.common_goal} />
       <RoundTimeline rounds={initialRounds} currentRoundId={game.current_round_id} />
       <EffectsList effects={effects} />
       <PersonalActivities gameId={game.id} playerId={player.id} />

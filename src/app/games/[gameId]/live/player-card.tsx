@@ -1,7 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { dicebearUrl } from "@/lib/dicebear";
-import { parseAvatarOptions } from "@/lib/avatar-options";
+import { roleAvatarUrl } from "@/lib/avatar-options";
 import { cn } from "@/lib/utils";
 import type { EffectTemplate, Goal, Player, PlayerEffect, PlayerGoalProgress, Role } from "@/lib/types";
 
@@ -43,11 +42,7 @@ export function PlayerCard({
           >
             {role ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={dicebearUrl(role.avatar_style, role.avatar_seed, parseAvatarOptions(role.avatar_options))}
-                alt={role.name}
-                className="size-full"
-              />
+              <img src={roleAvatarUrl(role)} alt={role.name} className="size-full object-cover" />
             ) : (
               <span className="text-xs text-muted-foreground">?</span>
             )}

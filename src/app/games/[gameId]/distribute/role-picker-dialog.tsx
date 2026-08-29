@@ -6,8 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { dicebearUrl } from "@/lib/dicebear";
-import { parseAvatarOptions } from "@/lib/avatar-options";
+import { roleAvatarUrl } from "@/lib/avatar-options";
 import type { Role } from "@/lib/types";
 
 export function RolePickerDialog({
@@ -43,11 +42,7 @@ export function RolePickerDialog({
                 style={{ borderColor: role.color }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={dicebearUrl(role.avatar_style, role.avatar_seed, parseAvatarOptions(role.avatar_options))}
-                  alt=""
-                  className="size-full"
-                />
+                <img src={roleAvatarUrl(role)} alt="" className="size-full object-cover" />
               </div>
               <span className="font-medium">{role.name}</span>
             </button>

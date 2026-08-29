@@ -5,8 +5,8 @@ import { ChevronRight, Globe2, Plus } from "lucide-react";
 import { useSupabaseClient } from "@/hooks/use-supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { dicebearUrl, randomAvatarSeed } from "@/lib/dicebear";
-import { parseAvatarOptions } from "@/lib/avatar-options";
+import { randomAvatarSeed } from "@/lib/dicebear";
+import { roleAvatarUrl } from "@/lib/avatar-options";
 import type { Game, Goal, Role, Round } from "@/lib/types";
 import { RoleEditorDialog } from "./role-editor-dialog";
 
@@ -105,11 +105,7 @@ export function RolesTab({
                 style={{ borderColor: role.color }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={dicebearUrl(role.avatar_style, role.avatar_seed, parseAvatarOptions(role.avatar_options))}
-                  alt={role.name}
-                  className="size-full"
-                />
+                <img src={roleAvatarUrl(role)} alt={role.name} className="size-full object-cover" />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate font-medium">{role.name}</p>

@@ -1,3 +1,5 @@
+import { dicebearUrl } from "./dicebear";
+
 // Поштучный выбор черт лица поддержан только для этих 3 стилей — у остальных
 // Dicebear-стилей нет единообразного набора отдельно управляемых черт.
 // Значения — точный список enum'ов из https://api.dicebear.com/9.x/<style>/schema.json.
@@ -115,4 +117,18 @@ export function parseAvatarOptions(json: unknown): Record<string, string> {
     if (typeof value === "string") result[key] = value;
   }
   return result;
+}
+
+/**
+ * Загруженное ведущим фото — это и есть аватар роли, не отдельная
+ * иллюстрация: если оно задано, используем его везде, где раньше
+ * рендерился Dicebear (маленькие иконки и большая карточка одинаково).
+ */
+export function roleAvatarUrl(role: {
+  avatar_style: string;
+  avatar_seed: string;
+  avatar_options: unknown;
+  portrait_url: string | null;
+}): string {
+  return role.portrait_url || dicebearUrl(role.avatar_style, role.avatar_seed, parseAvatarOptions(role.avatar_options));
 }

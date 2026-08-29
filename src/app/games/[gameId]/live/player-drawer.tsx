@@ -14,8 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { dicebearUrl } from "@/lib/dicebear";
-import { parseAvatarOptions } from "@/lib/avatar-options";
+import { roleAvatarUrl } from "@/lib/avatar-options";
 import type {
   EffectTemplate,
   Goal,
@@ -111,11 +110,7 @@ export function PlayerDrawer({
             >
               {role && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={dicebearUrl(role.avatar_style, role.avatar_seed, parseAvatarOptions(role.avatar_options))}
-                  alt={role.name}
-                  className="size-full"
-                />
+                <img src={roleAvatarUrl(role)} alt={role.name} className="size-full object-cover" />
               )}
             </div>
             <div className="text-left">
