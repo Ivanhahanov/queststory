@@ -16,6 +16,7 @@ import { dicebearUrl, randomAvatarSeed } from "@/lib/dicebear";
 import { hasFeatureEditor } from "@/lib/avatar-options";
 import { cn } from "@/lib/utils";
 import { AvatarFeatureEditor } from "./avatar-feature-editor";
+import { PortraitCropDialog } from "./portrait-cropper";
 
 export function AvatarPicker({
   style,
@@ -41,6 +42,7 @@ export function AvatarPicker({
   const [open, setOpen] = useState(false);
   const [batch, setBatch] = useState<string[]>([currentSeed]);
   const [tab, setTab] = useState<"random" | "custom" | "photo">(portraitUrl ? "photo" : "random");
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
   const canCustomize = hasFeatureEditor(style);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -132,7 +134,11 @@ export function AvatarPicker({
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={(e) => e.target.files?.[0] && onUploadPortrait(e.target.files[0])}
+              onChange={(e) => {
+                const selected = e.target.files?.[0];
+                if (selected) setPendingFile(selected);
+                e.target.value = "";
+              }}
             />
           </TabsContent>
         </Tabs>
@@ -143,6 +149,19 @@ export function AvatarPicker({
           </Button>
         </DialogFooter>
       </DialogContent>
+
+      <PortraitCropDialog
+        file={pendingFile}
+        uploading={uploadingPortrait}
+        onCancel={() => setPendingFile(null)}
+        onConfirm={(blob) => {
+          const croppedFile = new File([blob], `${pendingFile?.name.replace(/\.[^.]+$/, "") ?? "portrait"}.jpg`, {
+            type: "image/jpeg",
+          });
+          onUploadPortrait(croppedFile);
+          setPendingFile(null);
+        }}
+      />
     </Dialog>
   );
 }

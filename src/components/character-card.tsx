@@ -7,6 +7,10 @@ type CardGoal = { id: string; title: string; description: string };
 
 export type CardFrame = "none" | "fantasy" | "noir" | "scifi";
 
+// Соотношение сторон портрета — используется и здесь, и в кроп-редакторе
+// при загрузке фото, чтобы кадрирование совпадало с тем, что видно в карточке.
+export const PORTRAIT_ASPECT = 3 / 4;
+
 const frameOuter: Record<CardFrame, string> = {
   none: "",
   fantasy: "bg-gradient-to-br from-amber-200 via-yellow-700 to-amber-200 p-[3px] shadow-lg",
