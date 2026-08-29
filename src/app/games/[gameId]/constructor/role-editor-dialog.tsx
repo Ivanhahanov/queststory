@@ -207,10 +207,13 @@ export function RoleEditorDialog({
 
       {role && (
         <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
-          <DialogContent className="flex max-h-[92vh] flex-col overflow-y-auto sm:max-w-md">
+          <DialogContent
+            showCloseButton={false}
+            className="max-h-[92vh] overflow-y-auto border-none bg-transparent p-0 shadow-none ring-0 sm:max-w-md"
+          >
             <DialogTitle className="sr-only">Предпросмотр карточки: {role.name}</DialogTitle>
             <DialogDescription className="sr-only">Как карточка персонажа выглядит у игрока</DialogDescription>
-            <CharacterCard game={game} role={role} goals={scopedGoals} />
+            <CharacterCard game={game} role={role} goals={scopedGoals} onClose={() => setPreviewOpen(false)} />
           </DialogContent>
         </Dialog>
       )}

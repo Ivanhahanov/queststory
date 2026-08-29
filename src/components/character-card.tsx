@@ -1,6 +1,6 @@
 import type { ComponentType } from "react";
 import { PT_Serif } from "next/font/google";
-import { BookOpen, ListChecks, Target, UserRound } from "lucide-react";
+import { BookOpen, ListChecks, Target, UserRound, XIcon } from "lucide-react";
 import { roleAvatarUrl } from "@/lib/avatar-options";
 import { cn } from "@/lib/utils";
 import type { Role } from "@/lib/types";
@@ -34,6 +34,7 @@ const CARD_THEME: Record<
     caption: string;
     heading: string;
     name: string;
+    close: string;
     texture?: React.CSSProperties;
   }
 > = {
@@ -43,6 +44,7 @@ const CARD_THEME: Record<
     caption: "border-t border-border/60 bg-card",
     heading: "text-muted-foreground",
     name: "text-foreground",
+    close: "bg-background/80 text-foreground ring-1 ring-border hover:bg-background",
   },
   fantasy: {
     outer: "bg-gradient-to-br from-amber-200 via-yellow-700 to-amber-200 p-[3px]",
@@ -50,6 +52,7 @@ const CARD_THEME: Record<
     caption: "border-t border-amber-100/20 bg-gradient-to-r from-amber-800 via-yellow-700 to-amber-800",
     heading: "text-amber-400/90",
     name: cn("text-amber-50 tracking-wide", ptSerif.className),
+    close: "bg-black/40 text-amber-100 ring-1 ring-amber-200/40 hover:bg-black/60",
     texture: { backgroundImage: "radial-gradient(ellipse 140% 55% at 50% 0%, rgba(251,191,36,0.10), transparent 62%)" },
   },
   noir: {
@@ -58,6 +61,7 @@ const CARD_THEME: Record<
     caption: "border-t border-white/15 bg-black",
     heading: "text-neutral-400",
     name: "text-white uppercase tracking-[0.15em]",
+    close: "bg-black/60 text-white ring-1 ring-white/20 hover:bg-black/80",
     texture: {
       backgroundImage:
         "repeating-linear-gradient(0deg, rgba(255,255,255,0.035) 0px, rgba(255,255,255,0.035) 1px, transparent 1px, transparent 3px)",
@@ -69,6 +73,7 @@ const CARD_THEME: Record<
     caption: "border-t border-primary/40 bg-neutral-950",
     heading: "text-primary",
     name: "text-primary uppercase tracking-[0.2em]",
+    close: "bg-neutral-950/70 text-primary ring-1 ring-primary/40 hover:bg-neutral-950/90",
     texture: {
       backgroundImage:
         "linear-gradient(color-mix(in srgb, var(--primary) 12%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--primary) 12%, transparent) 1px, transparent 1px)",
@@ -141,10 +146,12 @@ export function CharacterCard({
   game,
   role,
   goals,
+  onClose,
 }: {
   game: { story_synopsis: string; common_goal: string; card_frame: string };
   role: Role;
   goals: CardGoal[];
+  onClose?: () => void;
 }) {
   const frame = normalizeFrame(game.card_frame);
   const theme = CARD_THEME[frame];
@@ -226,6 +233,19 @@ export function CharacterCard({
         </div>
       </div>
       <FrameCorners frame={frame} />
+      {onClose && (
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Закрыть"
+          className={cn(
+            "absolute top-3 right-3 z-20 flex size-8 items-center justify-center rounded-full backdrop-blur-sm transition-colors",
+            theme.close,
+          )}
+        >
+          <XIcon className="size-4" />
+        </button>
+      )}
     </div>
   );
 }

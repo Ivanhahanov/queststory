@@ -55,10 +55,13 @@ export function RoleHeader({
 
       {role && (
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogContent className="flex max-h-[92vh] flex-col overflow-y-auto sm:max-w-md">
+          <DialogContent
+            showCloseButton={false}
+            className="max-h-[92vh] overflow-y-auto border-none bg-transparent p-0 shadow-none ring-0 sm:max-w-md"
+          >
             <DialogTitle className="sr-only">Карточка персонажа: {role.name}</DialogTitle>
             <DialogDescription className="sr-only">История, цели и описание вашего персонажа</DialogDescription>
-            <CharacterCard game={game} role={role} goals={goals} />
+            <CharacterCard game={game} role={role} goals={goals} onClose={() => setOpen(false)} />
           </DialogContent>
         </Dialog>
       )}
