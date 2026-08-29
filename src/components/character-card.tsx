@@ -56,9 +56,8 @@ export function CharacterCard({
               frame === "noir" && "[filter:grayscale(0.15)_contrast(1.05)]",
             )}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 p-4">
-            <h2 className="text-2xl font-bold text-white drop-shadow">{role.name}</h2>
+          <div className="bg-black/85 p-4">
+            <h2 className="text-2xl font-bold text-white">{role.name}</h2>
           </div>
         </div>
         <FrameCorners frame={frame} />
