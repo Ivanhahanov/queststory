@@ -142,7 +142,7 @@ export function GameView({
     .reduce((sum, e) => sum + (e.value ?? 0), 0);
 
   return (
-    <div style={gameThemeStyle(game.accent_color)} className="mx-auto max-w-lg space-y-5 p-4 pb-16">
+    <div style={gameThemeStyle(game.accent_color)} className="mx-auto min-h-dvh max-w-lg space-y-5 p-4 pb-16">
       <ThemeColorSync color={game.accent_color} />
       <RoleHeader role={role} displayName={player.display_name} points={points} />
       <InstallAppBanner playerId={player.id} />
