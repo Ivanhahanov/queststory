@@ -145,7 +145,7 @@ export function GameView({
     <div style={gameThemeStyle(game.accent_color)} className="mx-auto max-w-lg space-y-5 p-4 pb-16">
       <ThemeColorSync color={game.accent_color} />
       <RoleHeader role={role} displayName={player.display_name} points={points} />
-      <InstallAppBanner />
+      <InstallAppBanner playerId={player.id} />
       <NotificationsBanner playerId={player.id} />
       <StorySection game={game} />
       <RoundTimeline rounds={initialRounds} currentRoundId={game.current_round_id} />

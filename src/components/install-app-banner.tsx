@@ -2,14 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { Download, Share, X } from "lucide-react";
+import { toast } from "sonner";
 import { useInstallPrompt } from "@/hooks/use-install-prompt";
+import { useSupabaseClient } from "@/hooks/use-supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { subscribeToPush } from "@/lib/push-client";
 
 const DISMISS_KEY = "qs-install-banner-dismissed";
 
-export function InstallAppBanner() {
+export function InstallAppBanner({ playerId }: { playerId?: string }) {
   const { isStandalone, isIos, canPromptInstall, promptInstall } = useInstallPrompt();
+  const supabase = useSupabaseClient();
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
@@ -24,6 +28,19 @@ export function InstallAppBanner() {
   function dismiss() {
     localStorage.setItem(DISMISS_KEY, "1");
     setDismissed(true);
+  }
+
+  // Запрашиваем разрешение на уведомления сразу в том же клике, которым
+  // пользователь принял установку — активация от жеста браузер ещё считает
+  // "свежей", так что второй системный диалог не выглядит рекламным спамом,
+  // и не нужен отдельный баннер «Включите уведомления» вторым шагом.
+  async function install() {
+    const outcome = await promptInstall();
+    dismiss();
+    if (outcome === "accepted" && playerId) {
+      const ok = await subscribeToPush(supabase, playerId);
+      if (ok) toast("Игра установлена, уведомления включены");
+    }
   }
 
   return (
@@ -42,7 +59,7 @@ export function InstallAppBanner() {
             <Download className="mt-0.5 size-4 shrink-0 text-primary" />
             <div className="flex-1 space-y-2">
               <p>Установите игру на экран — не потеряете доступ, если закроете вкладку, и будете получать уведомления от ведущего.</p>
-              <Button onClick={() => promptInstall().then(dismiss)}>Установить</Button>
+              <Button onClick={install}>Установить</Button>
             </div>
           </>
         )}

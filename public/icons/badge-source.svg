@@ -1,0 +1,17 @@
+<svg width="192" height="192" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Monochrome silhouette for Android's status-bar notification badge — the
+       OS recolors this using its alpha channel only, so it must be a solid
+       shape on a fully transparent background (no gradients/colors kept). -->
+  <g transform="translate(256 286)" fill="#ffffff">
+    <path d="M -100 -35 L -150 -152 L -32 -78 Z"/>
+    <path d="M 100 -35 L 150 -152 L 32 -78 Z"/>
+    <ellipse cx="0" cy="20" rx="120" ry="108"/>
+    <g transform="translate(0 -158)">
+      <path d="M -62 34 L -62 -6 L -34 18 L 0 -34 L 34 18 L 62 -6 L 62 34 Z"/>
+      <rect x="-62" y="30" width="124" height="16" rx="4"/>
+      <circle cx="-62" cy="-8" r="10"/>
+      <circle cx="0" cy="-36" r="12"/>
+      <circle cx="62" cy="-8" r="10"/>
+    </g>
+  </g>
+</svg>

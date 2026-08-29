@@ -34,15 +34,24 @@ export async function sendPushToPlayers(playerIds: string[], payload: PushPayloa
     if (!ensureConfigured()) return;
 
     const admin = createAdminClient();
-    const { data: subscriptions } = await admin.from("push_subscriptions").select("*").in("player_id", playerIds);
+    const [{ data: subscriptions }, { data: players }] = await Promise.all([
+      admin.from("push_subscriptions").select("*").in("player_id", playerIds),
+      admin.from("players").select("id, join_token").in("id", playerIds),
+    ]);
     if (!subscriptions?.length) return;
+
+    // Tapping a notification should drop the player straight into their game,
+    // not the marketing/login root — each player has their own join link.
+    const joinTokenByPlayer = new Map((players ?? []).map((p) => [p.id, p.join_token]));
 
     await Promise.allSettled(
       subscriptions.map(async (sub) => {
+        const joinToken = joinTokenByPlayer.get(sub.player_id);
+        const url = payload.url ?? (joinToken ? `/play/${joinToken}/game` : undefined);
         try {
           await webpush.sendNotification(
             { endpoint: sub.endpoint, keys: sub.keys as unknown as { p256dh: string; auth: string } },
-            JSON.stringify(payload),
+            JSON.stringify({ ...payload, url }),
           );
         } catch (err: unknown) {
           const statusCode = (err as { statusCode?: number }).statusCode;

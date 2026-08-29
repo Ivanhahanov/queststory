@@ -5,6 +5,7 @@ import path from "node:path";
 const root = path.resolve(import.meta.dirname, "..");
 const src = path.join(root, "public/icons/icon-source.svg");
 const srcMaskable = path.join(root, "public/icons/icon-source-maskable.svg");
+const srcBadge = path.join(root, "public/icons/badge-source.svg");
 const outDir = path.join(root, "public/icons");
 
 const targets = [
@@ -12,6 +13,9 @@ const targets = [
   { file: "icon-512.png", size: 512, source: src },
   { file: "icon-maskable-512.png", size: 512, source: srcMaskable },
   { file: "apple-touch-icon.png", size: 180, source: src },
+  // Android status-bar notification badge — transparent bg, solid white mark;
+  // the OS recolors it from the alpha channel and ignores any actual color.
+  { file: "badge-monochrome.png", size: 96, source: srcBadge },
 ];
 
 await mkdir(outDir, { recursive: true });

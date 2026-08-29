@@ -15,7 +15,9 @@ self.addEventListener("push", (event) => {
     self.registration.showNotification(title || "Квестория", {
       body,
       icon: icon || "/icons/icon-192.png",
-      badge: "/icons/icon-192.png",
+      badge: "/icons/badge-monochrome.png",
+      vibrate: [120, 60, 120],
+      actions: [{ action: "open", title: "Открыть" }],
       data: { url: url || "/" },
     }),
   );
