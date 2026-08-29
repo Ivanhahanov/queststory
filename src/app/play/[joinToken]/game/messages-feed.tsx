@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, Crown, MessageCircle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 import type { Message } from "@/lib/types";
 
 const COLLAPSED_COUNT = 5;
@@ -24,9 +23,16 @@ function readLastSeen(playerId: string) {
 
 export function MessagesFeed({ messages, playerId }: { messages: Message[]; playerId: string }) {
   const [expanded, setExpanded] = useState(false);
-  // Captured once on mount and kept stable for the whole visit — otherwise the
-  // "new" dot would disappear the instant we update storage below.
-  const [seenBefore] = useState(() => readLastSeen(playerId));
+  // localStorage doesn't exist during SSR, so this can only be read after
+  // mount — seeding it from useState's lazy initializer instead reads 0 on
+  // the server (marking every message "new" in the SSR HTML) and the real
+  // value on the client, which React then has to reconcile away right after
+  // hydration: a visible flash of dots that immediately disappear.
+  const [seenBefore, setSeenBefore] = useState<number | null>(null);
+
+  useEffect(() => {
+    Promise.resolve().then(() => setSeenBefore(readLastSeen(playerId)));
+  }, [playerId]);
 
   useEffect(() => {
     if (messages.length === 0) return;
@@ -36,7 +42,7 @@ export function MessagesFeed({ messages, playerId }: { messages: Message[]; play
 
   if (messages.length === 0) return null;
 
-  const isNew = (m: Message) => new Date(m.created_at).getTime() > seenBefore;
+  const isNew = (m: Message) => seenBefore !== null && new Date(m.created_at).getTime() > seenBefore;
   const hiddenCount = messages.length - COLLAPSED_COUNT;
   const visible = expanded || hiddenCount <= 0 ? messages : messages.slice(0, COLLAPSED_COUNT);
 
@@ -56,7 +62,7 @@ export function MessagesFeed({ messages, playerId }: { messages: Message[]; play
               <span className="shrink-0">{time(m)}</span>
             </div>
           ) : (
-            <div key={m.id} className={cn("rounded-lg bg-muted/60 p-2.5 text-sm", isNew(m) && "ring-1 ring-primary/40")}>
+            <div key={m.id} className="rounded-lg bg-muted/60 p-2.5 text-sm">
               <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                 <Crown className="size-3.5" />
                 Ведущий
