@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Golos_Text, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { ViewportKick } from "@/components/viewport-kick";
 import "./globals.css";
 
 const golosText = Golos_Text({
@@ -57,7 +56,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`dark ${golosText.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background">
-        <ViewportKick />
         <TooltipProvider delay={200}>{children}</TooltipProvider>
         <Toaster
           position="top-center"
