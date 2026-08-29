@@ -210,36 +210,42 @@ export function CharacterCard({
   ].filter((s): s is React.ReactElement => Boolean(s));
 
   return (
-    <div className={cn("relative mx-auto w-full max-w-sm rounded-2xl", theme.outer)}>
-      <div className={cn("overflow-hidden rounded-[inherit]", theme.surface)}>
-        {/* Персонаж должен быть виден сразу при открытии карточки */}
-        <div className={cn("relative", frame === "noir" && "[filter:grayscale(0.15)_contrast(1.05)]")}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={roleAvatarUrl(role)} alt={role.name} className="aspect-[3/4] w-full object-cover object-top" />
-          <div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_36px_10px_rgba(0,0,0,0.35)]" />
-        </div>
-        <div className={cn("p-4", theme.caption)}>
-          <h2 className={cn("text-2xl font-bold", theme.name)}>{role.name}</h2>
-          <span className="mt-1.5 block h-1 w-10 rounded-full" style={{ backgroundColor: role.color }} />
-        </div>
+    <div className="relative h-full w-full">
+      {/* Карточка на весь экран: тема — не рамка вокруг текста, а фон всего
+          диалога. Скроллится этот внутренний слой, а крестик закрытия —
+          отдельный fixed-элемент вне скролла, чтобы не убегал при прокрутке. */}
+      <div className={cn("relative h-full w-full overflow-y-auto", theme.outer)}>
+        <div className={cn("relative mx-auto min-h-full w-full max-w-md", theme.surface)}>
+          {/* Персонаж должен быть виден сразу при открытии карточки */}
+          <div className={cn("relative", frame === "noir" && "[filter:grayscale(0.15)_contrast(1.05)]")}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={roleAvatarUrl(role)} alt={role.name} className="aspect-[3/4] w-full object-cover object-top" />
+            <div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_36px_10px_rgba(0,0,0,0.35)]" />
+          </div>
+          <div className={cn("p-4", theme.caption)}>
+            <h2 className={cn("text-2xl font-bold", theme.name)}>{role.name}</h2>
+            <span className="mt-1.5 block h-1 w-10 rounded-full" style={{ backgroundColor: role.color }} />
+          </div>
 
-        <div className="space-y-4 p-4" style={theme.texture}>
-          {sections.map((section, i) => (
-            <div key={section.key} className="space-y-4">
-              {i > 0 && <SectionDivider />}
-              {section}
-            </div>
-          ))}
+          <div className="space-y-4 p-4 pb-8" style={theme.texture}>
+            {sections.map((section, i) => (
+              <div key={section.key} className="space-y-4">
+                {i > 0 && <SectionDivider />}
+                {section}
+              </div>
+            ))}
+          </div>
         </div>
+        <FrameCorners frame={frame} />
       </div>
-      <FrameCorners frame={frame} />
       {onClose && (
         <button
           type="button"
           onClick={onClose}
           aria-label="Закрыть"
+          style={{ top: "max(0.75rem, env(safe-area-inset-top))", right: "max(0.75rem, env(safe-area-inset-right))" }}
           className={cn(
-            "absolute top-3 right-3 z-20 flex size-8 items-center justify-center rounded-full backdrop-blur-sm transition-colors",
+            "fixed z-30 flex size-9 items-center justify-center rounded-full backdrop-blur-sm transition-colors",
             theme.close,
           )}
         >

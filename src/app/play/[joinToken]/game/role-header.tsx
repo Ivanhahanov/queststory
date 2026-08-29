@@ -57,7 +57,7 @@ export function RoleHeader({
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogContent
             showCloseButton={false}
-            className="max-h-[92vh] overflow-y-auto border-none bg-transparent p-0 shadow-none ring-0 sm:max-w-md"
+            className="top-0 right-0 bottom-0 left-0 flex h-dvh w-full max-w-none translate-x-0 translate-y-0 flex-col overflow-hidden rounded-none border-none bg-transparent p-0 shadow-none ring-0 sm:max-w-none"
           >
             <DialogTitle className="sr-only">Карточка персонажа: {role.name}</DialogTitle>
             <DialogDescription className="sr-only">История, цели и описание вашего персонажа</DialogDescription>
