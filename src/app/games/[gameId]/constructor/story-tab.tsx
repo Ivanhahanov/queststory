@@ -50,6 +50,11 @@ export function StoryTab({ game, onChange }: { game: Game; onChange: (game: Game
     }
   }
 
+  async function saveCardFrame(value: string) {
+    const { data } = await supabase.from("games").update({ card_frame: value }).eq("id", game.id).select().single();
+    if (data) onChange(data);
+  }
+
   return (
     <div className="space-y-4">
       <Card>
@@ -120,6 +125,70 @@ export function StoryTab({ game, onChange }: { game: Game; onChange: (game: Game
           </label>
         </CardContent>
       </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Рамка карточки персонажа</CardTitle>
+          <CardDescription>
+            Оформление полноэкранной карточки, которую игрок открывает тапом по своей плашке.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-wrap gap-3">
+          {CARD_FRAME_OPTIONS.map(({ value, label }) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => saveCardFrame(value)}
+              className={cn(
+                "flex flex-col items-center gap-1.5 rounded-lg p-2 text-xs transition-colors",
+                game.card_frame === value ? "bg-muted ring-2 ring-primary" : "hover:bg-muted/50",
+              )}
+            >
+              <FramePreview frame={value} />
+              {label}
+            </button>
+          ))}
+        </CardContent>
+      </Card>
     </div>
   );
+}
+
+const CARD_FRAME_OPTIONS = [
+  { value: "none", label: "Без рамки" },
+  { value: "fantasy", label: "Фэнтези" },
+  { value: "noir", label: "Нуар" },
+  { value: "scifi", label: "Техно" },
+] as const;
+
+function FramePreview({ frame }: { frame: (typeof CARD_FRAME_OPTIONS)[number]["value"] }) {
+  const swatch = <div className="size-full rounded-[6px] bg-gradient-to-br from-muted-foreground/40 to-muted-foreground/10" />;
+
+  if (frame === "fantasy") {
+    return (
+      <div className="h-14 w-11 rounded-lg bg-gradient-to-br from-amber-200 via-yellow-700 to-amber-200 p-[2px]">
+        <div className="size-full overflow-hidden rounded-[7px] ring-1 ring-white/25">{swatch}</div>
+      </div>
+    );
+  }
+  if (frame === "noir") {
+    return (
+      <div className="h-14 w-11 rounded-md bg-black p-[5px] ring-1 ring-white/10">
+        <div className="size-full overflow-hidden rounded-[2px]">{swatch}</div>
+      </div>
+    );
+  }
+  if (frame === "scifi") {
+    return (
+      <div className="relative h-14 w-11 rounded-md bg-primary/10 p-[3px]">
+        <div className="size-full overflow-hidden rounded-[4px]">{swatch}</div>
+        {(["top-0 left-0", "top-0 right-0 rotate-90", "bottom-0 right-0 rotate-180", "bottom-0 left-0 -rotate-90"] as const).map(
+          (pos) => (
+            <span key={pos} className={cn("absolute size-3 border-t-2 border-l-2 border-primary", pos)} />
+          ),
+        )}
+      </div>
+    );
+  }
+  return <div className="h-14 w-11 overflow-hidden rounded-lg">{swatch}</div>;
 }

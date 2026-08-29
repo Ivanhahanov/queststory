@@ -226,6 +226,7 @@ export type Database = {
         Row: {
           accent_color: string
           active_activity_run_id: string | null
+          card_frame: string
           common_goal: string
           created_at: string
           current_round_id: string | null
@@ -243,6 +244,7 @@ export type Database = {
         Insert: {
           accent_color?: string
           active_activity_run_id?: string | null
+          card_frame?: string
           common_goal?: string
           created_at?: string
           current_round_id?: string | null
@@ -260,6 +262,7 @@ export type Database = {
         Update: {
           accent_color?: string
           active_activity_run_id?: string | null
+          card_frame?: string
           common_goal?: string
           created_at?: string
           current_round_id?: string | null
@@ -588,6 +591,7 @@ export type Database = {
           game_id: string
           id: string
           name: string
+          portrait_url: string | null
         }
         Insert: {
           avatar_options?: Json
@@ -599,6 +603,7 @@ export type Database = {
           game_id: string
           id?: string
           name: string
+          portrait_url?: string | null
         }
         Update: {
           avatar_options?: Json
@@ -610,6 +615,7 @@ export type Database = {
           game_id?: string
           id?: string
           name?: string
+          portrait_url?: string | null
         }
         Relationships: [
           {

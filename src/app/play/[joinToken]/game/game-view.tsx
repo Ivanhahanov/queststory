@@ -16,7 +16,6 @@ import type {
   VisibleGoal,
 } from "@/lib/types";
 import { RoleHeader } from "./role-header";
-import { StorySection } from "./story-section";
 import { RoundTimeline } from "./round-timeline";
 import { GoalsList } from "./goals-list";
 import { EffectsList } from "./effects-list";
@@ -144,10 +143,15 @@ export function GameView({
   return (
     <div style={gameThemeStyle(game.accent_color)} className="min-h-dvh w-full space-y-5 p-4 pb-16">
       <ThemeColorSync color={game.accent_color} />
-      <RoleHeader role={role} displayName={player.display_name} points={points} />
+      <RoleHeader
+        role={role}
+        displayName={player.display_name}
+        points={points}
+        game={game}
+        goals={goals.filter((g) => !lockedGoalIds.has(g.id))}
+      />
       <InstallAppBanner playerId={player.id} />
       <NotificationsBanner playerId={player.id} />
-      <StorySection game={game} />
       <RoundTimeline rounds={initialRounds} currentRoundId={game.current_round_id} />
       <EffectsList effects={effects} />
       <PersonalActivities gameId={game.id} playerId={player.id} />

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { Globe2, Plus, Trash2 } from "lucide-react";
+import { useRef, useState } from "react";
+import { Eye, Globe2, ImagePlus, Plus, Trash2, X } from "lucide-react";
+import { toast } from "sonner";
 import { useSupabaseClient } from "@/hooks/use-supabase";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +20,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DICEBEAR_STYLES, dicebearUrl } from "@/lib/dicebear";
 import { parseAvatarOptions } from "@/lib/avatar-options";
 import { cn } from "@/lib/utils";
-import type { Goal, Role, Round } from "@/lib/types";
+import { CharacterCard } from "@/components/character-card";
+import type { Game, Goal, Role, Round } from "@/lib/types";
 import { AvatarPicker } from "./avatar-picker";
 import { GoalRow } from "./goal-row";
 
@@ -27,6 +29,7 @@ const PALETTE = ["#e0973f", "#8b5cf6", "#f43f5e", "#22c55e", "#0ea5e9", "#eab308
 
 export function RoleEditorDialog({
   gameId,
+  game,
   role,
   goals,
   rounds,
@@ -37,6 +40,7 @@ export function RoleEditorDialog({
   onDeleteRole,
 }: {
   gameId: string;
+  game: Game;
   role: Role | null;
   goals: Goal[];
   rounds: Round[];
@@ -48,11 +52,29 @@ export function RoleEditorDialog({
 }) {
   const supabase = useSupabaseClient();
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [uploadingPortrait, setUploadingPortrait] = useState(false);
+  const portraitInputRef = useRef<HTMLInputElement>(null);
 
   async function patchRole(update: Partial<Role>) {
     if (!role) return;
     const { data } = await supabase.from("roles").update(update).eq("id", role.id).select().single();
     if (data) onRoleChange(data);
+  }
+
+  async function uploadPortrait(file: File) {
+    if (!role) return;
+    setUploadingPortrait(true);
+    const path = `${gameId}/${role.id}/${Date.now()}-${file.name}`;
+    const { error } = await supabase.storage.from("role-portraits").upload(path, file);
+    if (error) {
+      toast.error("Не удалось загрузить фото");
+      setUploadingPortrait(false);
+      return;
+    }
+    const { data: pub } = supabase.storage.from("role-portraits").getPublicUrl(path);
+    await patchRole({ portrait_url: pub.publicUrl });
+    setUploadingPortrait(false);
   }
 
   const scopedGoals = goals
@@ -167,6 +189,35 @@ export function RoleEditorDialog({
               </div>
 
               <Separator />
+
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium text-muted-foreground">Карточка персонажа</h3>
+                <p className="text-xs text-muted-foreground">
+                  Полноэкранная карточка, которую игрок открывает тапом по своей плашке — фото, история, цель и описание роли.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <Button type="button" variant="outline" size="sm" onClick={() => portraitInputRef.current?.click()} disabled={uploadingPortrait}>
+                    <ImagePlus /> {role.portrait_url ? "Заменить фото" : "Загрузить фото"}
+                  </Button>
+                  {role.portrait_url && (
+                    <Button type="button" variant="ghost" size="sm" onClick={() => patchRole({ portrait_url: null })}>
+                      <X /> Убрать фото
+                    </Button>
+                  )}
+                  <Button type="button" variant="secondary" size="sm" onClick={() => setPreviewOpen(true)}>
+                    <Eye /> Предпросмотр карточки
+                  </Button>
+                  <input
+                    ref={portraitInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => e.target.files?.[0] && uploadPortrait(e.target.files[0])}
+                  />
+                </div>
+              </div>
+
+              <Separator />
             </div>
           )}
 
@@ -199,6 +250,16 @@ export function RoleEditorDialog({
           </DialogFooter>
         )}
       </DialogContent>
+
+      {role && (
+        <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+          <DialogContent className="flex max-h-[92vh] flex-col overflow-y-auto sm:max-w-md">
+            <DialogTitle className="sr-only">Предпросмотр карточки: {role.name}</DialogTitle>
+            <DialogDescription className="sr-only">Как карточка персонажа выглядит у игрока</DialogDescription>
+            <CharacterCard game={game} role={role} goals={scopedGoals} />
+          </DialogContent>
+        </Dialog>
+      )}
 
       {role && onDeleteRole && (
         <Dialog open={confirmDeleteOpen} onOpenChange={setConfirmDeleteOpen}>

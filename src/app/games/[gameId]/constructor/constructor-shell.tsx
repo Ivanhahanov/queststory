@@ -75,6 +75,7 @@ export function ConstructorShell({
         <TabsContent value="roles" className="pt-4">
           <RolesTab
             gameId={game.id}
+            game={game}
             roles={roles}
             goals={goals}
             rounds={rounds}

@@ -7,11 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { dicebearUrl, randomAvatarSeed } from "@/lib/dicebear";
 import { parseAvatarOptions } from "@/lib/avatar-options";
-import type { Goal, Role, Round } from "@/lib/types";
+import type { Game, Goal, Role, Round } from "@/lib/types";
 import { RoleEditorDialog } from "./role-editor-dialog";
 
 export function RolesTab({
   gameId,
+  game,
   roles,
   goals,
   rounds,
@@ -19,6 +20,7 @@ export function RolesTab({
   onGoalsChange,
 }: {
   gameId: string;
+  game: Game;
   roles: Role[];
   goals: Goal[];
   rounds: Round[];
@@ -121,6 +123,7 @@ export function RolesTab({
 
       <RoleEditorDialog
         gameId={gameId}
+        game={game}
         role={editorTarget === "common" ? null : editingRole}
         goals={goals}
         rounds={rounds}
