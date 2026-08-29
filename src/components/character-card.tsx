@@ -215,11 +215,14 @@ export function CharacterCard({
   ].filter((s): s is React.ReactElement => Boolean(s));
 
   return (
-    <div className="relative h-full w-full bg-black">
+    <>
       {/* Карточка на весь экран: тема — не рамка вокруг текста, а фон всего
-          диалога. Скроллится этот внутренний слой, а крестик закрытия —
-          отдельный fixed-элемент вне скролла, чтобы не убегал при прокрутке. */}
-      <div className={cn("relative h-full w-full overflow-y-auto rounded-[1.75rem]", theme.outer)}>
+          диалога. position:fixed + inset-0 напрямую к вьюпорту — то же,
+          чем уже надёжно работают крестик и уголки — вместо процентной
+          высоты (h-full) через цепочку flex/grid-родителей Dialog, которая
+          на части мобильных браузеров не досчитывалась до реального низа
+          экрана (виден зазор перед системным индикатором свайпа). */}
+      <div className={cn("fixed inset-0 overflow-y-auto rounded-[1.75rem] bg-black", theme.outer)}>
         <div className={cn("relative mx-auto min-h-full w-full max-w-md", theme.surface)}>
           {/* Персонаж должен быть виден сразу при открытии карточки */}
           <div className={cn("relative", frame === "noir" && "[filter:grayscale(0.15)_contrast(1.05)]")}>
@@ -260,6 +263,6 @@ export function CharacterCard({
           <XIcon className="size-4" />
         </button>
       )}
-    </div>
+    </>
   );
 }
