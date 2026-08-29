@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, Crown, MessageCircle, Sparkles } from "lucide-react";
+import { ChevronDown, ChevronUp, Crown, MessageCircle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Message } from "@/lib/types";
@@ -45,9 +45,17 @@ export function MessagesFeed({ messages }: { messages: Message[] }) {
             </div>
           ),
         )}
-        {hiddenCount > 0 && !expanded && (
-          <Button variant="outline" size="sm" className="w-full" onClick={() => setExpanded(true)}>
-            <ChevronDown /> Показать ещё {hiddenCount}
+        {hiddenCount > 0 && (
+          <Button variant="outline" size="sm" className="w-full" onClick={() => setExpanded((v) => !v)}>
+            {expanded ? (
+              <>
+                <ChevronUp /> Скрыть
+              </>
+            ) : (
+              <>
+                <ChevronDown /> Показать ещё {hiddenCount}
+              </>
+            )}
           </Button>
         )}
       </CardContent>
