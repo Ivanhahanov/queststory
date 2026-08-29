@@ -28,6 +28,12 @@ const DISPLAY_MODE_LABEL: Record<string, string> = {
   kiosk: "На общем экране (планшет ведущего)",
 };
 
+const RESULTS_VISIBILITY_LABEL: Record<string, string> = {
+  open: "Открытое — видно, кто как проголосовал",
+  anonymous: "Анонимное — видны только итоги",
+  closed: "Закрытое — результаты видит только ведущий",
+};
+
 export function ActivityCard({
   activity,
   goals,
@@ -140,22 +146,42 @@ export function ActivityCard({
         )}
 
         {activity.type === "group_vote" && (
-          <div className="space-y-1">
-            <Label className="text-xs">Варианты голосования (по одному на строке)</Label>
-            <Textarea
-              defaultValue={groupVoteConfig(activity.config).options.join("\n")}
-              rows={3}
-              onBlur={(e) =>
-                patch({
-                  config: {
-                    options: e.target.value
-                      .split("\n")
-                      .map((s) => s.trim())
-                      .filter(Boolean),
-                  },
-                })
-              }
-            />
+          <div className="space-y-3">
+            <div className="space-y-1">
+              <Label className="text-xs">Варианты голосования (по одному на строке)</Label>
+              <Textarea
+                defaultValue={groupVoteConfig(activity.config).options.join("\n")}
+                rows={3}
+                onBlur={(e) =>
+                  patch({
+                    config: {
+                      options: e.target.value
+                        .split("\n")
+                        .map((s) => s.trim())
+                        .filter(Boolean),
+                    },
+                  })
+                }
+              />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Результаты для игроков</Label>
+              <Select
+                value={activity.results_visibility}
+                onValueChange={(v) => patch({ results_visibility: v ?? undefined })}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue>{(value: string) => RESULTS_VISIBILITY_LABEL[value] ?? value}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(RESULTS_VISIBILITY_LABEL).map(([value, label]) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         )}
       </CardContent>

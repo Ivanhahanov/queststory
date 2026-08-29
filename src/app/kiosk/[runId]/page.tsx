@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { gameThemeStyle } from "@/lib/theme-color";
 import { ThemeColorSync } from "@/components/theme-color-sync";
+import type { VoteResults } from "@/lib/vote-results";
 
 type KioskInfo = {
   status: string;
@@ -13,8 +14,43 @@ type KioskInfo = {
   name: string;
   instructions: string;
   options?: string[];
+  results?: VoteResults;
   accentColor: string;
 };
+
+function KioskVoteResults({ results }: { results?: VoteResults }) {
+  if (!results || results.visibility === "closed") return null;
+
+  if (results.visibility === "anonymous") {
+    const total = Object.values(results.counts).reduce((s, n) => s + n, 0) || 1;
+    return (
+      <div className="w-full space-y-2">
+        {Object.entries(results.counts).map(([option, count]) => (
+          <div key={option} className="space-y-1">
+            <div className="flex items-center justify-between text-sm">
+              <span>{option}</span>
+              <span className="text-muted-foreground">{count}</span>
+            </div>
+            <div className="h-2 overflow-hidden rounded-full bg-muted">
+              <div className="h-full rounded-full bg-primary" style={{ width: `${(count / total) * 100}%` }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full space-y-1.5 text-sm">
+      {results.votes.map((v, i) => (
+        <div key={i} className="flex items-center justify-between rounded-md bg-muted/50 px-3 py-1.5">
+          <span className="text-muted-foreground">{v.playerName}</span>
+          <span className="font-medium">{v.choice}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function KioskPage({ params }: { params: Promise<{ runId: string }> }) {
   const { runId } = use(params);
@@ -23,11 +59,16 @@ export default function KioskPage({ params }: { params: Promise<{ runId: string 
   const [result, setResult] = useState<"correct" | "incorrect" | "voted" | null>(null);
   const [pending, setPending] = useState(false);
 
-  useEffect(() => {
-    fetch(`/api/activity-runs/${runId}/kiosk-info`)
+  function loadInfo() {
+    return fetch(`/api/activity-runs/${runId}/kiosk-info`)
       .then((r) => r.json())
       .then(setInfo)
       .catch(() => setInfo(null));
+  }
+
+  useEffect(() => {
+    loadInfo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runId]);
 
   async function submitPin() {
@@ -52,6 +93,7 @@ export default function KioskPage({ params }: { params: Promise<{ runId: string 
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ choice }),
     });
+    await loadInfo();
     setResult("voted");
     setPending(false);
   }
@@ -104,7 +146,10 @@ export default function KioskPage({ params }: { params: Promise<{ runId: string 
       {info.type === "group_vote" && (
         <div className="grid w-full max-w-sm gap-3">
           {result === "voted" ? (
-            <p className="text-xl font-semibold text-primary">Голос учтён, спасибо!</p>
+            <>
+              <p className="text-xl font-semibold text-primary">Голос учтён, спасибо!</p>
+              <KioskVoteResults results={info.results} />
+            </>
           ) : (
             (info.options ?? []).map((option) => (
               <Button key={option} size="lg" variant="outline" className="h-14 text-lg" onClick={() => submitVote(option)} disabled={pending}>

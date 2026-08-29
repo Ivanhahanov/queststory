@@ -152,7 +152,7 @@ export function GameView({
       <EffectsList effects={effects} />
       <PersonalActivities gameId={game.id} playerId={player.id} />
       <GoalsList playerId={player.id} goals={goals} lockedGoalIds={lockedGoalIds} />
-      <MessagesFeed messages={messages} />
+      <MessagesFeed messages={messages} playerId={player.id} />
       <div className="flex justify-center pt-2">
         <LeaveGameButton player={player} />
       </div>

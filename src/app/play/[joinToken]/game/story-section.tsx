@@ -9,7 +9,7 @@ export function StorySection({ game }: { game: Game }) {
     <div className="space-y-3">
       {game.story_synopsis && (
         <Card>
-          <CardHeader className="flex-row items-center gap-2 space-y-0">
+          <CardHeader className="flex flex-row items-center gap-2 space-y-0">
             <BookOpen className="size-4 text-muted-foreground" />
             <CardTitle className="text-sm font-medium text-muted-foreground">История</CardTitle>
           </CardHeader>
@@ -18,7 +18,7 @@ export function StorySection({ game }: { game: Game }) {
       )}
       {game.common_goal && (
         <Card className="border-primary/30 bg-primary/5">
-          <CardHeader className="flex-row items-center gap-2 space-y-0">
+          <CardHeader className="flex flex-row items-center gap-2 space-y-0">
             <Target className="size-4 text-primary" />
             <CardTitle className="text-sm font-medium text-primary">Общая цель</CardTitle>
           </CardHeader>

@@ -7,6 +7,7 @@ import { useSupabaseClient } from "@/hooks/use-supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { VoteResults } from "@/lib/vote-results";
 
 type Activity = {
   runId: string;
@@ -14,6 +15,7 @@ type Activity = {
   name: string;
   instructions: string;
   options?: string[];
+  results?: VoteResults;
 };
 
 export function PersonalActivities({ gameId, playerId }: { gameId: string; playerId: string }) {
@@ -32,6 +34,7 @@ export function PersonalActivities({ gameId, playerId }: { gameId: string; playe
     const channel = supabase
       .channel(`activities:game-${gameId}`)
       .on("broadcast", { event: "activity_started" }, () => refresh())
+      .on("broadcast", { event: "vote_cast" }, () => refresh())
       .subscribe();
     return () => {
       supabase.removeChannel(channel);
@@ -45,6 +48,40 @@ export function PersonalActivities({ gameId, playerId }: { gameId: string; playe
     <div className="space-y-3">
       {activities.map((a) => (
         <ActivityCard key={a.runId} activity={a} playerId={playerId} gameId={gameId} onDone={refresh} />
+      ))}
+    </div>
+  );
+}
+
+function VoteResultsView({ results }: { results?: VoteResults }) {
+  if (!results || results.visibility === "closed") return null;
+
+  if (results.visibility === "anonymous") {
+    const total = Object.values(results.counts).reduce((s, n) => s + n, 0) || 1;
+    return (
+      <div className="w-full space-y-1.5 text-left">
+        {Object.entries(results.counts).map(([option, count]) => (
+          <div key={option} className="space-y-0.5">
+            <div className="flex items-center justify-between text-xs">
+              <span>{option}</span>
+              <span className="text-muted-foreground">{count}</span>
+            </div>
+            <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+              <div className="h-full rounded-full bg-primary" style={{ width: `${(count / total) * 100}%` }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full space-y-1 text-left text-xs">
+      {results.votes.map((v, i) => (
+        <div key={i} className="flex items-center justify-between rounded-md bg-muted/50 px-2 py-1">
+          <span className="text-muted-foreground">{v.playerName}</span>
+          <span className="font-medium">{v.choice}</span>
+        </div>
       ))}
     </div>
   );
@@ -96,6 +133,8 @@ function ActivityCard({
     setPending(false);
     setDone(true);
     toast("Голос учтён");
+    onDone();
+    supabase.channel(`activities:game-${gameId}`).send({ type: "broadcast", event: "vote_cast", payload: {} });
   }
 
   async function submitPhoto(file: File) {
@@ -120,6 +159,20 @@ function ActivityCard({
   }
 
   if (done) {
+    if (activity.type === "group_vote" && activity.results && activity.results.visibility !== "closed") {
+      return (
+        <Card className="border-primary/30 bg-primary/5">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-sm font-medium text-primary">
+              <Check className="size-4" /> Голос учтён
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <VoteResultsView results={activity.results} />
+          </CardContent>
+        </Card>
+      );
+    }
     return (
       <Card className="border-primary/30 bg-primary/5">
         <CardContent className="flex items-center gap-2 text-sm text-primary">

@@ -137,6 +137,7 @@ export type Database = {
           instructions: string
           linked_goal_id: string | null
           name: string
+          results_visibility: string
           type: string
         }
         Insert: {
@@ -148,6 +149,7 @@ export type Database = {
           instructions?: string
           linked_goal_id?: string | null
           name: string
+          results_visibility?: string
           type: string
         }
         Update: {
@@ -159,6 +161,7 @@ export type Database = {
           instructions?: string
           linked_goal_id?: string | null
           name?: string
+          results_visibility?: string
           type?: string
         }
         Relationships: [
