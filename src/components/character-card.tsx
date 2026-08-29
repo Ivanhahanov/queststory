@@ -82,29 +82,34 @@ const CARD_THEME: Record<
   },
 };
 
-const SCIFI_CORNERS = ["top-0 left-0", "top-0 right-0 rotate-90", "bottom-0 right-0 rotate-180", "bottom-0 left-0 -rotate-90"] as const;
-const FANTASY_CORNERS = ["top-2 left-2", "top-2 right-2", "bottom-2 right-2", "bottom-2 left-2"] as const;
+// Уголки — как крестик закрытия, зафиксированы во вьюпорте (не уезжают
+// при скролле), с отступом от истинного угла экрана: у смартфонов экран
+// скруглён по краям и физически срезает всё, что нарисовано впритык.
+const CORNER_STYLES = [
+  { top: "max(0.75rem, env(safe-area-inset-top))", left: "max(0.75rem, env(safe-area-inset-left))" },
+  { top: "max(0.75rem, env(safe-area-inset-top))", right: "max(0.75rem, env(safe-area-inset-right))" },
+  { bottom: "max(0.75rem, env(safe-area-inset-bottom))", right: "max(0.75rem, env(safe-area-inset-right))" },
+  { bottom: "max(0.75rem, env(safe-area-inset-bottom))", left: "max(0.75rem, env(safe-area-inset-left))" },
+] as const;
+const CORNER_ROTATIONS = ["", "rotate-90", "rotate-180", "-rotate-90"] as const;
 
 function FrameCorners({ frame }: { frame: CardFrame }) {
-  if (frame === "scifi") {
-    return (
-      <>
-        {SCIFI_CORNERS.map((pos) => (
-          <span key={pos} className={cn("pointer-events-none absolute z-10 size-6 border-t-2 border-l-2 border-primary", pos)} />
-        ))}
-      </>
-    );
-  }
-  if (frame === "fantasy") {
-    return (
-      <>
-        {FANTASY_CORNERS.map((pos) => (
-          <span key={pos} className={cn("pointer-events-none absolute z-10 size-1.5 rotate-45 bg-amber-300/60", pos)} />
-        ))}
-      </>
-    );
-  }
-  return null;
+  if (frame !== "scifi" && frame !== "fantasy") return null;
+  const isScifi = frame === "scifi";
+  return (
+    <>
+      {CORNER_STYLES.map((style, i) => (
+        <span
+          key={i}
+          style={style}
+          className={cn(
+            "pointer-events-none fixed z-10",
+            isScifi ? cn("size-6 border-t-2 border-l-2 border-primary", CORNER_ROTATIONS[i]) : "size-1.5 rotate-45 bg-amber-300/60",
+          )}
+        />
+      ))}
+    </>
+  );
 }
 
 function SectionHeading({
@@ -210,11 +215,11 @@ export function CharacterCard({
   ].filter((s): s is React.ReactElement => Boolean(s));
 
   return (
-    <div className="relative h-full w-full">
+    <div className="relative h-full w-full bg-black">
       {/* Карточка на весь экран: тема — не рамка вокруг текста, а фон всего
           диалога. Скроллится этот внутренний слой, а крестик закрытия —
           отдельный fixed-элемент вне скролла, чтобы не убегал при прокрутке. */}
-      <div className={cn("relative h-full w-full overflow-y-auto", theme.outer)}>
+      <div className={cn("relative h-full w-full overflow-y-auto rounded-[1.75rem]", theme.outer)}>
         <div className={cn("relative mx-auto min-h-full w-full max-w-md", theme.surface)}>
           {/* Персонаж должен быть виден сразу при открытии карточки */}
           <div className={cn("relative", frame === "noir" && "[filter:grayscale(0.15)_contrast(1.05)]")}>
@@ -227,7 +232,10 @@ export function CharacterCard({
             <span className="mt-1.5 block h-1 w-10 rounded-full" style={{ backgroundColor: role.color }} />
           </div>
 
-          <div className="space-y-4 p-4 pb-8" style={theme.texture}>
+          <div
+            className="space-y-4 p-4"
+            style={{ ...theme.texture, paddingBottom: "max(2rem, env(safe-area-inset-bottom))" }}
+          >
             {sections.map((section, i) => (
               <div key={section.key} className="space-y-4">
                 {i > 0 && <SectionDivider />}
@@ -236,8 +244,8 @@ export function CharacterCard({
             ))}
           </div>
         </div>
-        <FrameCorners frame={frame} />
       </div>
+      <FrameCorners frame={frame} />
       {onClose && (
         <button
           type="button"
