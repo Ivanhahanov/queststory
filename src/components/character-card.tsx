@@ -1,9 +1,12 @@
-import { BookOpen, Target } from "lucide-react";
+import type { ComponentType } from "react";
+import { PT_Serif } from "next/font/google";
+import { BookOpen, ListChecks, Target, UserRound } from "lucide-react";
 import { roleAvatarUrl } from "@/lib/avatar-options";
 import { cn } from "@/lib/utils";
 import type { Role } from "@/lib/types";
 
 type CardGoal = { id: string; title: string; description: string };
+type IconType = ComponentType<{ className?: string }>;
 
 export type CardFrame = "none" | "fantasy" | "noir" | "scifi";
 
@@ -11,15 +14,28 @@ export type CardFrame = "none" | "fantasy" | "noir" | "scifi";
 // при загрузке фото, чтобы кадрирование совпадало с тем, что видно в карточке.
 export const PORTRAIT_ASPECT = 3 / 4;
 
+// Отдельный шрифт только для имени персонажа в fantasy-теме — задаёт
+// "книжный" характер, не трогая шрифт всего остального интерфейса.
+const ptSerif = PT_Serif({ weight: "700", subsets: ["cyrillic", "latin"] });
+
 // Стиль оформления применяется ко всей карточке целиком (фон, рамка,
-// плашка с именем), а не только к портрету — иначе рамка вокруг фото
-// смотрится приклеенной поверх обычного текстового блока снизу.
+// плашка с именем, текстура), а не только к портрету — иначе рамка вокруг
+// фото смотрится приклеенной поверх обычного текстового блока снизу.
 // Тени намеренно не используются: карточка живёт внутри скроллящегося
-// Dialog, а overflow-y:auto на родителе обрезает box-shadow, вылезающий
-// за границы блока.
+// Dialog, а overflow-y:auto на родителе по спецификации CSS превращает
+// overflow-x тоже в клиппинг-контекст — любой box-shadow срежет по краю.
+// Inset-тени безопасны (не выходят за границы блока), background-image —
+// тоже, поэтому текстура и виньетка сделаны именно так.
 const CARD_THEME: Record<
   CardFrame,
-  { outer: string; surface: string; caption: string; heading: string; name: string }
+  {
+    outer: string;
+    surface: string;
+    caption: string;
+    heading: string;
+    name: string;
+    texture?: React.CSSProperties;
+  }
 > = {
   none: {
     outer: "",
@@ -31,36 +47,89 @@ const CARD_THEME: Record<
   fantasy: {
     outer: "bg-gradient-to-br from-amber-200 via-yellow-700 to-amber-200 p-[3px]",
     surface: "bg-gradient-to-b from-stone-900 via-neutral-900 to-stone-950 ring-1 ring-amber-200/15",
-    caption: "bg-gradient-to-r from-amber-800 via-yellow-700 to-amber-800",
+    caption: "border-t border-amber-100/20 bg-gradient-to-r from-amber-800 via-yellow-700 to-amber-800",
     heading: "text-amber-400/90",
-    name: "text-amber-50",
+    name: cn("text-amber-50 tracking-wide", ptSerif.className),
+    texture: { backgroundImage: "radial-gradient(ellipse 140% 55% at 50% 0%, rgba(251,191,36,0.10), transparent 62%)" },
   },
   noir: {
     outer: "bg-gradient-to-b from-white/25 via-white/10 to-white/25 p-px",
     surface: "bg-neutral-950 ring-1 ring-white/10",
     caption: "border-t border-white/15 bg-black",
     heading: "text-neutral-400",
-    name: "text-white",
+    name: "text-white uppercase tracking-[0.15em]",
+    texture: {
+      backgroundImage:
+        "repeating-linear-gradient(0deg, rgba(255,255,255,0.035) 0px, rgba(255,255,255,0.035) 1px, transparent 1px, transparent 3px)",
+    },
   },
   scifi: {
     outer: "bg-primary/25 p-px",
     surface: "bg-neutral-950 ring-1 ring-primary/30",
     caption: "border-t border-primary/40 bg-neutral-950",
     heading: "text-primary",
-    name: "text-primary",
+    name: "text-primary uppercase tracking-[0.2em]",
+    texture: {
+      backgroundImage:
+        "linear-gradient(color-mix(in srgb, var(--primary) 12%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--primary) 12%, transparent) 1px, transparent 1px)",
+      backgroundSize: "18px 18px",
+    },
   },
 };
 
+const SCIFI_CORNERS = ["top-0 left-0", "top-0 right-0 rotate-90", "bottom-0 right-0 rotate-180", "bottom-0 left-0 -rotate-90"] as const;
+const FANTASY_CORNERS = ["top-2 left-2", "top-2 right-2", "bottom-2 right-2", "bottom-2 left-2"] as const;
+
 function FrameCorners({ frame }: { frame: CardFrame }) {
-  if (frame !== "scifi") return null;
-  return (
-    <>
-      {(["top-0 left-0", "top-0 right-0 rotate-90", "bottom-0 right-0 rotate-180", "bottom-0 left-0 -rotate-90"] as const).map(
-        (pos) => (
+  if (frame === "scifi") {
+    return (
+      <>
+        {SCIFI_CORNERS.map((pos) => (
           <span key={pos} className={cn("pointer-events-none absolute z-10 size-6 border-t-2 border-l-2 border-primary", pos)} />
-        ),
-      )}
-    </>
+        ))}
+      </>
+    );
+  }
+  if (frame === "fantasy") {
+    return (
+      <>
+        {FANTASY_CORNERS.map((pos) => (
+          <span key={pos} className={cn("pointer-events-none absolute z-10 size-1.5 rotate-45 bg-amber-300/60", pos)} />
+        ))}
+      </>
+    );
+  }
+  return null;
+}
+
+function SectionHeading({
+  icon: Icon,
+  children,
+  className,
+  badgeStyle,
+}: {
+  icon: IconType;
+  children: React.ReactNode;
+  className?: string;
+  badgeStyle: React.CSSProperties;
+}) {
+  return (
+    <h3 className={cn("flex items-center gap-2 text-xs font-medium tracking-wide uppercase", className)}>
+      <span className="flex size-5 shrink-0 items-center justify-center rounded-full" style={badgeStyle}>
+        <Icon className="size-3" />
+      </span>
+      {children}
+    </h3>
+  );
+}
+
+function SectionDivider() {
+  return (
+    <div className="flex items-center gap-2 opacity-40">
+      <span className="h-px flex-1 bg-current" />
+      <span className="size-1 rotate-45 bg-current" />
+      <span className="h-px flex-1 bg-current" />
+    </div>
   );
 }
 
@@ -79,61 +148,81 @@ export function CharacterCard({
 }) {
   const frame = normalizeFrame(game.card_frame);
   const theme = CARD_THEME[frame];
+  const roleTint = { backgroundColor: `${role.color}26`, color: role.color };
+  const neutralTint = { backgroundColor: "color-mix(in srgb, currentColor 12%, transparent)" };
+  const primaryTint = { backgroundColor: "color-mix(in srgb, var(--primary) 15%, transparent)", color: "var(--primary)" };
+
+  const sections = [
+    game.story_synopsis && (
+      <div key="story" className={cn("space-y-1", theme.heading)}>
+        <SectionHeading icon={BookOpen} badgeStyle={neutralTint}>
+          История
+        </SectionHeading>
+        <p className="whitespace-pre-line text-sm text-muted-foreground">{game.story_synopsis}</p>
+      </div>
+    ),
+    game.common_goal && (
+      <div key="goal" className="space-y-1 text-primary">
+        <SectionHeading icon={Target} badgeStyle={primaryTint}>
+          Общая цель
+        </SectionHeading>
+        <p className="whitespace-pre-line text-sm text-foreground">{game.common_goal}</p>
+      </div>
+    ),
+    role.description && (
+      <div key="description" className={cn("space-y-1", theme.heading)}>
+        <SectionHeading icon={UserRound} badgeStyle={roleTint}>
+          О персонаже
+        </SectionHeading>
+        <p className="whitespace-pre-line text-sm text-foreground">{role.description}</p>
+      </div>
+    ),
+    goals.length > 0 && (
+      <div key="objectives" className={cn("space-y-2", theme.heading)}>
+        <SectionHeading icon={ListChecks} badgeStyle={roleTint}>
+          Цели персонажа
+        </SectionHeading>
+        <div className="space-y-1.5">
+          {goals.map((goal, i) => (
+            <div key={goal.id} className="flex items-start gap-2.5 rounded-lg bg-muted/60 p-2.5">
+              <span
+                className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full text-[11px] font-bold"
+                style={roleTint}
+              >
+                {i + 1}
+              </span>
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-foreground">{goal.title}</p>
+                {goal.description && <p className="text-xs text-muted-foreground">{goal.description}</p>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    ),
+  ].filter((s): s is React.ReactElement => Boolean(s));
 
   return (
     <div className={cn("relative mx-auto w-full max-w-sm rounded-2xl", theme.outer)}>
       <div className={cn("overflow-hidden rounded-[inherit]", theme.surface)}>
         {/* Персонаж должен быть виден сразу при открытии карточки */}
-        <div className={frame === "noir" ? "[filter:grayscale(0.15)_contrast(1.05)]" : undefined}>
+        <div className={cn("relative", frame === "noir" && "[filter:grayscale(0.15)_contrast(1.05)]")}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={roleAvatarUrl(role)} alt={role.name} className="aspect-[3/4] w-full object-cover object-top" />
+          <div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_36px_10px_rgba(0,0,0,0.35)]" />
         </div>
         <div className={cn("p-4", theme.caption)}>
           <h2 className={cn("text-2xl font-bold", theme.name)}>{role.name}</h2>
+          <span className="mt-1.5 block h-1 w-10 rounded-full" style={{ backgroundColor: role.color }} />
         </div>
 
-        <div className="space-y-5 p-4">
-          {game.story_synopsis && (
-            <div className="space-y-1">
-              <h3 className={cn("flex items-center gap-1.5 text-xs font-medium tracking-wide uppercase", theme.heading)}>
-                <BookOpen className="size-3.5" /> История
-              </h3>
-              <p className="whitespace-pre-line text-sm text-muted-foreground">{game.story_synopsis}</p>
+        <div className="space-y-4 p-4" style={theme.texture}>
+          {sections.map((section, i) => (
+            <div key={section.key} className="space-y-4">
+              {i > 0 && <SectionDivider />}
+              {section}
             </div>
-          )}
-
-          {game.common_goal && (
-            <div className="space-y-1">
-              <h3 className="flex items-center gap-1.5 text-xs font-medium tracking-wide text-primary uppercase">
-                <Target className="size-3.5" /> Общая цель
-              </h3>
-              <p className="whitespace-pre-line text-sm">{game.common_goal}</p>
-            </div>
-          )}
-
-          {role.description && (
-            <div className="space-y-1">
-              <h3 className={cn("text-xs font-medium tracking-wide uppercase", theme.heading)}>О персонаже</h3>
-              <p className="whitespace-pre-line text-sm">{role.description}</p>
-            </div>
-          )}
-
-          {goals.length > 0 && (
-            <div className="space-y-2">
-              <h3 className={cn("text-xs font-medium tracking-wide uppercase", theme.heading)}>Цели персонажа</h3>
-              <div className="space-y-1.5">
-                {goals.map((goal) => (
-                  <div key={goal.id} className="flex items-start gap-2 rounded-lg bg-muted/60 p-2.5">
-                    <Target className="mt-0.5 size-4 shrink-0 text-primary" />
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium">{goal.title}</p>
-                      {goal.description && <p className="text-xs text-muted-foreground">{goal.description}</p>}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          ))}
         </div>
       </div>
       <FrameCorners frame={frame} />
