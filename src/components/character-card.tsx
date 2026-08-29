@@ -63,24 +63,21 @@ export function CharacterCard({
         <FrameCorners frame={frame} />
       </div>
 
-      {(game.story_synopsis || game.common_goal) && (
-        <div className="space-y-3 rounded-xl border border-border/60 bg-card p-3.5">
-          {game.story_synopsis && (
-            <div className="space-y-1">
-              <h3 className="flex items-center gap-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                <BookOpen className="size-3.5" /> История
-              </h3>
-              <p className="whitespace-pre-line text-sm text-muted-foreground">{game.story_synopsis}</p>
-            </div>
-          )}
-          {game.common_goal && (
-            <div className="space-y-1">
-              <h3 className="flex items-center gap-1.5 text-xs font-medium tracking-wide text-primary uppercase">
-                <Target className="size-3.5" /> Общая цель
-              </h3>
-              <p className="whitespace-pre-line text-sm">{game.common_goal}</p>
-            </div>
-          )}
+      {game.story_synopsis && (
+        <div className="space-y-1">
+          <h3 className="flex items-center gap-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+            <BookOpen className="size-3.5" /> История
+          </h3>
+          <p className="whitespace-pre-line text-sm text-muted-foreground">{game.story_synopsis}</p>
+        </div>
+      )}
+
+      {game.common_goal && (
+        <div className="space-y-1">
+          <h3 className="flex items-center gap-1.5 text-xs font-medium tracking-wide text-primary uppercase">
+            <Target className="size-3.5" /> Общая цель
+          </h3>
+          <p className="whitespace-pre-line text-sm">{game.common_goal}</p>
         </div>
       )}
 
