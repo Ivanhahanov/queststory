@@ -133,3 +133,20 @@
     @apply font-sans;
   }
 }
+
+/* Статичный шум поверх скрытой тайны персонажа — карточка персонажа */
+@keyframes secret-noise {
+  0%,
+  100% {
+    background-position: 0 0;
+  }
+  25% {
+    background-position: -4px 2px;
+  }
+  50% {
+    background-position: 3px -3px;
+  }
+  75% {
+    background-position: -2px -4px;
+  }
+}

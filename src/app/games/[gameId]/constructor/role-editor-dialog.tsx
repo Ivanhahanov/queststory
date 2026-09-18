@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, Globe2, Plus, Trash2 } from "lucide-react";
+import { Eye, Globe2, Lock, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useSupabaseClient } from "@/hooks/use-supabase";
 import { Button } from "@/components/ui/button";
@@ -150,6 +150,18 @@ export function RoleEditorDialog({
                 rows={3}
                 onBlur={(e) => patchRole({ description: e.target.value })}
               />
+
+              <div className="space-y-1.5">
+                <p className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                  <Lock className="size-3.5" /> Тайна персонажа
+                </p>
+                <Textarea
+                  defaultValue={role.secret}
+                  placeholder="То, что персонаж скрывает от остальных — игрок сам решит, кому и когда это показать"
+                  rows={2}
+                  onBlur={(e) => patchRole({ secret: e.target.value })}
+                />
+              </div>
 
               <div className="flex flex-wrap items-center gap-2.5">
                 {PALETTE.map((color) => (

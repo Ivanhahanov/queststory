@@ -36,6 +36,7 @@ const roundSchema = z.object({
 const roleSchema = z.object({
   name: shortName,
   description: looseString(4000),
+  secret: looseString(2000),
   avatar_style: z.enum(AVATAR_STYLE_IDS).default("adventurer"),
   color: hexColor.default("#e0973f"),
   goals: z.array(goalSchema).max(40),
@@ -107,6 +108,7 @@ export function buildScenario(input: {
     roles: input.roles.map((role) => ({
       name: role.name,
       description: role.description,
+      secret: role.secret,
       avatar_style: role.avatar_style,
       color: role.color,
       goals: goalsFor(role.id),
@@ -149,6 +151,7 @@ export function buildScenarioPrompt(theme: string, playerCount: number) {
     {
       "name": "имя персонажа",
       "description": "предыстория, характер, отношения с другими персонажами",
+      "secret": "тайна этого персонажа — то, что он скрывает от остальных",
       "avatar_style": "adventurer",
       "color": "#e0973f",
       "goals": [
@@ -173,5 +176,6 @@ export function buildScenarioPrompt(theme: string, playerCount: number) {
 - activity_templates[].type — одно из: pin_code (config: {"correctCode": "1234"}), photo_approval (config: {}), group_vote (config: {"options": ["...", "..."]}).
 - unlock_round — точное название раунда из массива rounds, либо null, если цель открыта с самого начала.
 - Ролей должно быть ровно ${playerCount}, у каждой минимум одна личная цель.
+- secret — конкретная тайна персонажа (1-3 предложения), а не пересказ description: то, что он скрывает от остальных и ради чего игроки будут искать повод поговорить друг с другом. Не повторяй в description то, что уже написано в secret.
 - Пиши на русском, атмосферно и по делу, без воды.`;
 }

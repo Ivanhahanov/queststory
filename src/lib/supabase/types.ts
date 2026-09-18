@@ -592,6 +592,7 @@ export type Database = {
           id: string
           name: string
           portrait_url: string | null
+          secret: string
         }
         Insert: {
           avatar_options?: Json
@@ -604,6 +605,7 @@ export type Database = {
           id?: string
           name: string
           portrait_url?: string | null
+          secret?: string
         }
         Update: {
           avatar_options?: Json
@@ -616,6 +618,7 @@ export type Database = {
           id?: string
           name?: string
           portrait_url?: string | null
+          secret?: string
         }
         Relationships: [
           {

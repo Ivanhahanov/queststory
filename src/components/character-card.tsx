@@ -1,9 +1,16 @@
-import type { ComponentType } from "react";
+"use client";
+
+import { useState, type ComponentType } from "react";
 import { PT_Serif } from "next/font/google";
-import { BookOpen, ListChecks, Target, UserRound, XIcon } from "lucide-react";
+import { BookOpen, Eye, ListChecks, Lock, Target, UserRound, XIcon } from "lucide-react";
 import { roleAvatarUrl } from "@/lib/avatar-options";
 import { cn } from "@/lib/utils";
 import type { Role } from "@/lib/types";
+
+// Шум поверх скрытой тайны — SVG feTurbulence как фон, а не картинка:
+// один инлайн data-uri, без сетевого запроса и без лишнего файла в /public.
+const SECRET_NOISE_BG =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
 
 type CardGoal = { id: string; title: string; description: string };
 type IconType = ComponentType<{ className?: string }>;
@@ -143,6 +150,50 @@ function SectionDivider() {
   );
 }
 
+function SecretSection({
+  secret,
+  heading,
+  badgeStyle,
+  roleColor,
+}: {
+  secret: string;
+  heading: string;
+  badgeStyle: React.CSSProperties;
+  roleColor: string;
+}) {
+  const [revealed, setRevealed] = useState(false);
+
+  return (
+    <div className={cn("space-y-1", heading)}>
+      <SectionHeading icon={Lock} badgeStyle={badgeStyle}>
+        Тайна
+      </SectionHeading>
+      <button
+        type="button"
+        onClick={() => setRevealed((v) => !v)}
+        className="relative block w-full overflow-hidden rounded-lg text-left transition-transform active:scale-[0.99]"
+        style={{ backgroundColor: `${roleColor}1a`, boxShadow: `inset 0 0 0 1px ${roleColor}40` }}
+      >
+        <p className="p-3 text-sm whitespace-pre-line text-foreground">{secret}</p>
+        {!revealed && (
+          <div
+            className="absolute inset-0 flex flex-col items-center justify-center gap-1 text-center text-xs font-medium text-white"
+            style={{
+              backgroundImage: SECRET_NOISE_BG,
+              backgroundColor: "rgba(10,10,12,0.82)",
+              animation: "secret-noise 0.7s steps(2) infinite",
+            }}
+          >
+            <Eye className="size-4" />
+            Нажмите, чтобы раскрыть
+          </div>
+        )}
+      </button>
+      {revealed && <p className="px-1 text-xs text-muted-foreground">Нажмите ещё раз, чтобы снова скрыть</p>}
+    </div>
+  );
+}
+
 function normalizeFrame(value: string): CardFrame {
   return (["none", "fantasy", "noir", "scifi"] as const).includes(value as CardFrame) ? (value as CardFrame) : "none";
 }
@@ -188,6 +239,9 @@ export function CharacterCard({
         </SectionHeading>
         <p className="whitespace-pre-line text-sm text-foreground">{role.description}</p>
       </div>
+    ),
+    role.secret && (
+      <SecretSection key="secret" secret={role.secret} heading={theme.heading} badgeStyle={roleTint} roleColor={role.color} />
     ),
     goals.length > 0 && (
       <div key="objectives" className={cn("space-y-2", theme.heading)}>
