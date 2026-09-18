@@ -134,19 +134,13 @@
   }
 }
 
-/* Статичный шум поверх скрытой тайны персонажа — карточка персонажа */
-@keyframes secret-noise {
-  0%,
+/* Плёнка поверх скрытой тайны персонажа — карточка персонажа.
+   Медленный блик по диагонали, а не резкое мерцание шума. */
+@keyframes secret-shimmer {
+  0% {
+    background-position: -120% 0;
+  }
   100% {
-    background-position: 0 0;
-  }
-  25% {
-    background-position: -4px 2px;
-  }
-  50% {
-    background-position: 3px -3px;
-  }
-  75% {
-    background-position: -2px -4px;
+    background-position: 220% 0;
   }
 }
