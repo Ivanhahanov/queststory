@@ -184,9 +184,9 @@ function SecretSection({
         >
           <span
             className="flex size-9 items-center justify-center rounded-full backdrop-blur-sm"
-            style={{ backgroundColor: `${roleColor}40`, boxShadow: `0 0 0 1px ${roleColor}66` }}
+            style={{ backgroundColor: `${roleColor}66`, boxShadow: `0 0 0 1px ${roleColor}, 0 0 14px 2px ${roleColor}80` }}
           >
-            <Eye className="size-4" style={{ color: roleColor }} />
+            <Eye className="size-4 text-white" strokeWidth={2.5} />
           </span>
         </span>
       </button>
