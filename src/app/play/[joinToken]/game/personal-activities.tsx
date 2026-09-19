@@ -125,12 +125,16 @@ function ActivityCard({
 
   async function submitVote(choice: string) {
     setPending(true);
-    await fetch(`/api/activity-runs/${activity.runId}/submit-vote`, {
+    const res = await fetch(`/api/activity-runs/${activity.runId}/submit-vote`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ choice }),
     });
     setPending(false);
+    if (!res.ok) {
+      toast.error("Не удалось отправить голос — попробуйте ещё раз");
+      return;
+    }
     setDone(true);
     toast("Голос учтён");
     onDone();

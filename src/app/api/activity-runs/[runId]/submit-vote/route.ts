@@ -27,12 +27,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ runId: 
     playerId = player?.id ?? null;
   }
 
-  await admin.from("activity_submissions").insert({
+  const { error } = await admin.from("activity_submissions").insert({
     activity_run_id: run.id,
     player_id: playerId,
     payload: { choice },
     status: "pending",
   });
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   return NextResponse.json({ ok: true });
 }
