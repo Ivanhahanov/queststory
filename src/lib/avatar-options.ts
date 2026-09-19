@@ -37,6 +37,8 @@ const ADVENTURER_FEATURES: AvatarFeature[] = [
   { key: "glasses", label: "Очки", values: Array.from({ length: 5 }, (_, i) => `variant0${i + 1}`) },
   { key: "earrings", label: "Серьги", values: Array.from({ length: 6 }, (_, i) => `variant0${i + 1}`) },
   { key: "features", label: "Особые приметы", values: ["mustache", "blush", "birthmark", "freckles"] },
+  { key: "hairColor", label: "Цвет волос", values: ["ac6511","cb6820","ab2a18","e5d7a3","b9a05f","796a45","6a4e35","562306","0e0e0e","afafaf","3eac2c","85c2c6","dba3be","592454"] },
+  { key: "skinColor", label: "Цвет кожи", values: ["f2d3b1","ecad80","9e5622","763900"] },
 ];
 
 const BOTTTS_FEATURES: AvatarFeature[] = [
@@ -69,6 +71,7 @@ const BOTTTS_FEATURES: AvatarFeature[] = [
     label: "Текстура корпуса",
     values: ["camo01", "camo02", "circuits", "dirty01", "dirty02", "dots", "grunge01", "grunge02"],
   },
+  { key: "baseColor", label: "Цвет корпуса", values: ["ffb300","1e88e5","546e7a","6d4c41","00acc1","f4511e","5e35b1","43a047","757575","3949ab","039be5","7cb342","c0ca33","fb8c00","d81b60","8e24aa","e53935","00897b","fdd835"] },
 ];
 
 const PERSONAS_FEATURES: AvatarFeature[] = [
@@ -86,6 +89,9 @@ const PERSONAS_FEATURES: AvatarFeature[] = [
   { key: "facialHair", label: "Борода/усы", values: ["beardMustache", "pyramid", "walrus", "goatee", "shadow", "soulPatch"] },
   { key: "nose", label: "Нос", values: ["mediumRound", "smallRound", "wrinkles"] },
   { key: "body", label: "Телосложение", values: ["squared", "rounded", "small", "checkered"] },
+  { key: "clothingColor", label: "Цвет одежды", values: ["456dff","54d7c7","7555ca","6dbb58","e24553","f3b63a","f55d81"] },
+  { key: "hairColor", label: "Цвет волос", values: ["362c47","6c4545","e15c66","e16381","f27d65","f29c65","dee1f5"] },
+  { key: "skinColor", label: "Цвет кожи", values: ["eeb4a4","e7a391","e5a07e","d78774","b16a5b","92594b","623d36"] },
 ];
 
 const ADVENTURER_NEUTRAL_FEATURES: AvatarFeature[] = [
@@ -105,6 +111,12 @@ const AVATAAARS_FEATURES: AvatarFeature[] = [
   { key: "mouth", label: "Рот", values: ["concerned","default","disbelief","eating","grimace","sad","screamOpen","serious","smile","tongue","twinkle","vomit"] },
   { key: "style", label: "Форма аватара", values: ["circle","default"] },
   { key: "top", label: "Причёска/убор", values: ["hat","hijab","turban","winterHat1","winterHat02","winterHat03","winterHat04","bob","bun","curly","curvy","dreads","frida","fro","froBand","longButNotTooLong","miaWallace","shavedSides","straight02","straight01","straightAndStrand","dreads01","dreads02","frizzle","shaggy","shaggyMullet","shortCurly","shortFlat","shortRound","shortWaved","sides","theCaesar","theCaesarAndSidePart","bigHair"] },
+  { key: "accessoriesColor", label: "Цвет аксессуаров", values: ["262e33","65c9ff","5199e4","25557c","e6e6e6","929598","3c4f5c","b1e2ff","a7ffc4","ffdeb5","ffafb9","ffffb1","ff488e","ff5c5c","ffffff"] },
+  { key: "clothesColor", label: "Цвет одежды", values: ["262e33","65c9ff","5199e4","25557c","e6e6e6","929598","3c4f5c","b1e2ff","a7ffc4","ffafb9","ffffb1","ff488e","ff5c5c","ffffff"] },
+  { key: "facialHairColor", label: "Цвет бороды/усов", values: ["a55728","2c1b18","b58143","d6b370","724133","4a312c","f59797","ecdcbf","c93305","e8e1e1"] },
+  { key: "hairColor", label: "Цвет волос", values: ["a55728","2c1b18","b58143","d6b370","724133","4a312c","f59797","ecdcbf","c93305","e8e1e1"] },
+  { key: "hatColor", label: "Цвет головного убора", values: ["262e33","65c9ff","5199e4","25557c","e6e6e6","929598","3c4f5c","b1e2ff","a7ffc4","ffdeb5","ffafb9","ffffb1","ff488e","ff5c5c","ffffff"] },
+  { key: "skinColor", label: "Цвет кожи", values: ["614335","d08b5b","ae5d29","edb98a","ffdbb4","fd9841","f8d25c"] },
 ];
 
 const BIG_EARS_FEATURES: AvatarFeature[] = [
@@ -117,6 +129,8 @@ const BIG_EARS_FEATURES: AvatarFeature[] = [
   { key: "mouth", label: "Рот", values: ["variant0708","variant0707","variant0706","variant0705","variant0704","variant0703","variant0702","variant0701","variant0405","variant0605","variant0604","variant0603","variant0602","variant0601","variant0505","variant0504","variant0503","variant0502","variant0501","variant0404","variant0403","variant0402","variant0401","variant0305","variant0304","variant0303","variant0302","variant0301","variant0205","variant0204","variant0203","variant0202","variant0201","variant0105","variant0104","variant0103","variant0102","variant0101"] },
   { key: "nose", label: "Нос", values: ["variant12","variant11","variant10","variant09","variant08","variant07","variant06","variant05","variant04","variant03","variant02","variant01"] },
   { key: "sideburn", label: "Бакенбарды", values: ["variant07","variant06","variant05","variant04","variant03","variant02","variant01"] },
+  { key: "hairColor", label: "Цвет волос", values: ["2c1b18","e8e1e1","ecdcbf","d6b370","f59797","b58143","a55728","724133","4a312c","c93305"] },
+  { key: "skinColor", label: "Цвет кожи", values: ["f8b788","da9969","c07f50","a66637","89532c"] },
 ];
 
 const BIG_SMILE_FEATURES: AvatarFeature[] = [
@@ -124,6 +138,8 @@ const BIG_SMILE_FEATURES: AvatarFeature[] = [
   { key: "eyes", label: "Глаза", values: ["cheery","normal","confused","starstruck","winking","sleepy","sad","angry"] },
   { key: "hair", label: "Причёска", values: ["shortHair","mohawk","wavyBob","bowlCutHair","curlyBob","straightHair","braids","shavedHead","bunHair","froBun","bangs","halfShavedHead","curlyShortHair"] },
   { key: "mouth", label: "Рот", values: ["openedSmile","unimpressed","gapSmile","openSad","teethSmile","awkwardSmile","braces","kawaii"] },
+  { key: "hairColor", label: "Цвет волос", values: ["220f00","3a1a00","71472d","e2ba87","605de4","238d80","d56c0c","e9b729"] },
+  { key: "skinColor", label: "Цвет кожи", values: ["ffe4c0","f5d7b1","efcc9f","e2ba87","c99c62","a47539","8c5a2b","643d19"] },
 ];
 
 const CROODLES_FEATURES: AvatarFeature[] = [
@@ -134,6 +150,7 @@ const CROODLES_FEATURES: AvatarFeature[] = [
   { key: "mustache", label: "Усы", values: ["variant04","variant03","variant02","variant01"] },
   { key: "nose", label: "Нос", values: ["variant09","variant08","variant07","variant06","variant05","variant04","variant03","variant02","variant01"] },
   { key: "top", label: "Причёска/убор", values: ["variant29","variant28","variant27","variant26","variant25","variant24","variant23","variant22","variant21","variant20","variant19","variant18","variant17","variant16","variant15","variant14","variant13","variant12","variant11","variant10","variant09","variant08","variant07","variant06","variant05","variant04","variant03","variant02","variant01"] },
+  { key: "topColor", label: "Цвет причёски/убора", values: ["ffc700","9747ff","f24e1e","699bf7","0fa958","000000"] },
 ];
 
 const FUN_EMOJI_FEATURES: AvatarFeature[] = [
@@ -164,6 +181,12 @@ const MICAH_FEATURES: AvatarFeature[] = [
   { key: "mouth", label: "Рот", values: ["surprised","laughing","nervous","smile","sad","pucker","frown","smirk"] },
   { key: "nose", label: "Нос", values: ["curve","pointed","tound"] },
   { key: "shirt", label: "Рубашка", values: ["open","crew","collared"] },
+  { key: "baseColor", label: "Цвет кожи", values: ["f9c9b6","ac6651","77311d"] },
+  { key: "earringColor", label: "Цвет серёг", values: ["f9c9b6","d2eff3","000000","e0ddff","f4d150","ac6651","9287ff","ffeba4","fc909f","ffedef","6bd9e9","77311d","ffffff"] },
+  { key: "eyeShadowColor", label: "Цвет теней", values: ["d2eff3","e0ddff","ffeba4","ffedef","ffffff"] },
+  { key: "glassesColor", label: "Цвет очков", values: ["f9c9b6","d2eff3","000000","e0ddff","f4d150","ac6651","9287ff","ffeba4","fc909f","ffedef","6bd9e9","77311d","ffffff"] },
+  { key: "hairColor", label: "Цвет волос", values: ["f9c9b6","d2eff3","000000","e0ddff","f4d150","ac6651","9287ff","ffeba4","fc909f","ffedef","6bd9e9","77311d","ffffff"] },
+  { key: "shirtColor", label: "Цвет рубашки", values: ["f9c9b6","d2eff3","000000","e0ddff","f4d150","ac6651","9287ff","ffeba4","fc909f","ffedef","6bd9e9","77311d","ffffff"] },
 ];
 
 const NOTIONISTS_FEATURES: AvatarFeature[] = [
@@ -185,6 +208,9 @@ const OPEN_PEEPS_FEATURES: AvatarFeature[] = [
   { key: "facialHair", label: "Борода/усы", values: ["chin","full","full2","full3","full4","goatee1","goatee2","moustache1","moustache2","moustache3","moustache4","moustache5","moustache6","moustache7","moustache8","moustache9"] },
   { key: "head", label: "Причёска", values: ["afro","bangs","bangs2","bantuKnots","bear","bun","bun2","buns","cornrows","cornrows2","dreads1","dreads2","flatTop","flatTopLong","grayBun","grayMedium","grayShort","hatBeanie","hatHip","hijab","long","longAfro","longBangs","longCurly","medium1","medium2","medium3","mediumBangs","mediumBangs2","mediumBangs3","mediumStraight","mohawk","mohawk2","noHair1","noHair2","noHair3","pomp","shaved1","shaved2","shaved3","short1","short2","short3","short4","short5","turban","twists","twists2"] },
   { key: "mask", label: "Маска", values: ["medicalMask","respirator"] },
+  { key: "clothingColor", label: "Цвет одежды", values: ["e78276","ffcf77","fdea6b","78e185","9ddadb","8fa7df","e279c7"] },
+  { key: "headContrastColor", label: "Цвет волос", values: ["2c1b18","e8e1e1","ecdcbf","d6b370","f59797","b58143","a55728","724133","4a312c","c93305"] },
+  { key: "skinColor", label: "Цвет кожи", values: ["ffdbb4","edb98a","d08b5b","ae5d29","694d3d"] },
 ];
 
 const PIXEL_ART_FEATURES: AvatarFeature[] = [
@@ -196,12 +222,22 @@ const PIXEL_ART_FEATURES: AvatarFeature[] = [
   { key: "hair", label: "Причёска", values: ["short24","short23","short22","short21","short20","short19","short18","short17","short16","short15","short14","short13","short12","short11","short10","short09","short08","short07","short06","short05","short04","short03","short02","short01","long21","long20","long19","long18","long17","long16","long15","long14","long13","long12","long11","long10","long09","long08","long07","long06","long05","long04","long03","long02","long01"] },
   { key: "hat", label: "Головной убор", values: ["variant10","variant09","variant08","variant07","variant06","variant05","variant04","variant03","variant02","variant01"] },
   { key: "mouth", label: "Рот", values: ["sad10","sad09","sad08","sad07","sad06","sad05","sad04","sad03","sad02","sad01","happy13","happy12","happy11","happy10","happy09","happy08","happy07","happy06","happy05","happy04","happy03","happy02","happy01"] },
+  { key: "accessoriesColor", label: "Цвет аксессуаров", values: ["daa520","ffd700","fafad2","d3d3d3","a9a9a9"] },
+  { key: "clothingColor", label: "Цвет одежды", values: ["5bc0de","428bca","03396c","88d8b0","44c585","00b159","ff6f69","d11141","ae0001","ffeead","ffd969","ffc425"] },
+  { key: "eyesColor", label: "Цвет глаз", values: ["76778b","697b94","647b90","5b7c8b","588387","876658"] },
+  { key: "glassesColor", label: "Цвет очков", values: ["4b4b4b","323232","191919","43677d","5f705c","a04b5d"] },
+  { key: "hairColor", label: "Цвет волос", values: ["cab188","603a14","83623b","a78961","611c17","603015","612616","28150a","009bbd","bd1700","91cb15"] },
+  { key: "hatColor", label: "Цвет головного убора", values: ["2e1e05","2663a3","989789","3d8a6b","cc6192","614f8a","a62116"] },
+  { key: "mouthColor", label: "Цвет рта", values: ["d29985","c98276","e35d6a","de0f0d"] },
 ];
 
 const THUMBS_FEATURES: AvatarFeature[] = [
   { key: "eyes", label: "Глаза", values: ["variant1W10","variant1W12","variant1W14","variant1W16","variant2W10","variant2W12","variant2W14","variant2W16","variant3W10","variant3W12","variant3W14","variant3W16","variant4W10","variant4W12","variant4W14","variant4W16","variant5W10","variant5W12","variant5W14","variant5W16","variant6W10","variant6W12","variant6W14","variant6W16","variant7W10","variant7W12","variant7W14","variant7W16","variant8W10","variant8W12","variant8W14","variant8W16","variant9W10","variant9W12","variant9W14","variant9W16"] },
   { key: "face", label: "Форма лица", values: ["variant1","variant2","variant3","variant5","variant4"] },
   { key: "mouth", label: "Рот", values: ["variant2","variant1","variant3","variant4","variant5"] },
+  { key: "eyesColor", label: "Цвет глаз", values: ["000000","ffffff"] },
+  { key: "mouthColor", label: "Цвет рта", values: ["000000","ffffff"] },
+  { key: "shapeColor", label: "Основной цвет", values: ["0a5b83","1c799f","69d2e7","f1f4dc","f88c49"] },
 ];
 
 export const AVATAR_FEATURE_CONFIG: Record<string, AvatarFeature[]> = {
