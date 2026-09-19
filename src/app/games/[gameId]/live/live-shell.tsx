@@ -19,6 +19,7 @@ import { LiveRoundTimeline } from "./live-round-timeline";
 import { PlayerGrid } from "./player-grid";
 import { PlayerDrawer } from "./player-drawer";
 import { ActivitiesPanel } from "./activities-panel";
+import { PhotoGallery } from "./photo-gallery";
 
 export function LiveShell({
   game: initialGame,
@@ -149,6 +150,8 @@ export function LiveShell({
           })
         }
       />
+
+      <PhotoGallery gameId={game.id} players={players} />
 
       <PlayerGrid
         players={players}
