@@ -2,7 +2,7 @@
 
 import { useState, type ComponentType } from "react";
 import { PT_Serif } from "next/font/google";
-import { BookOpen, ListChecks, Lock, Target, UserRound, XIcon } from "lucide-react";
+import { BookOpen, Eye, ListChecks, Lock, Target, UserRound, XIcon } from "lucide-react";
 import { roleAvatarUrl } from "@/lib/avatar-options";
 import { cn } from "@/lib/utils";
 import type { Role } from "@/lib/types";
@@ -168,13 +168,27 @@ function SecretSection({
           узор внутри контура текста цвет меняют, но силуэт остаётся
           читаемым). Никакой прямоугольной плашки — просто текст, как в
           Telegram-спойлере, с плавным наведением резкости при раскрытии. */}
-      <button type="button" onClick={() => setRevealed((v) => !v)} className="block w-full text-left">
+      <button type="button" onClick={() => setRevealed((v) => !v)} className="relative block w-full text-left">
         <p
           className={cn("text-sm whitespace-pre-line transition-[filter] duration-500", revealed ? "text-foreground" : "select-none")}
           style={revealed ? undefined : { color: roleColor, filter: "blur(7px)" }}
         >
           {secret}
         </p>
+        <span
+          aria-hidden
+          className={cn(
+            "pointer-events-none absolute inset-0 flex items-center justify-center transition-opacity duration-300",
+            revealed && "opacity-0",
+          )}
+        >
+          <span
+            className="flex size-9 items-center justify-center rounded-full backdrop-blur-sm"
+            style={{ backgroundColor: `${roleColor}40`, boxShadow: `0 0 0 1px ${roleColor}66` }}
+          >
+            <Eye className="size-4" style={{ color: roleColor }} />
+          </span>
+        </span>
       </button>
     </div>
   );
