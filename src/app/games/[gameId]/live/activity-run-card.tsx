@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import { Check, Copy, X } from "lucide-react";
+import { Check, Copy, ExternalLink, X } from "lucide-react";
 import { toast } from "sonner";
 import { useSupabaseClient } from "@/hooks/use-supabase";
 import { Badge } from "@/components/ui/badge";
@@ -67,6 +67,15 @@ export function ActivityRunCard({
           </div>
           <Button variant="ghost" size="icon-sm" onClick={copyKioskUrl} title="Скопировать ссылку">
             {copied ? <Check className="text-emerald-500" /> : <Copy />}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            nativeButton={false}
+            title="Открыть в новой вкладке"
+            render={<a href={kioskUrl} target="_blank" rel="noopener noreferrer" />}
+          >
+            <ExternalLink />
           </Button>
         </div>
       )}
