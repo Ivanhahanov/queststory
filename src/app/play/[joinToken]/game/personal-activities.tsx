@@ -6,6 +6,7 @@ import { Check } from "lucide-react";
 import { useSupabaseClient } from "@/hooks/use-supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PinPad } from "@/components/pin-pad";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { VoteResults } from "@/lib/vote-results";
 
@@ -15,6 +16,7 @@ type Activity = {
   name: string;
   instructions: string;
   options?: string[];
+  pinLength?: number;
   results?: VoteResults;
 };
 
@@ -103,13 +105,12 @@ function ActivityCard({
   const [pending, setPending] = useState(false);
   const [done, setDone] = useState(false);
 
-  async function submitPin() {
-    if (!code.trim()) return;
+  async function submitPin(entered: string) {
     setPending(true);
     const res = await fetch(`/api/activity-runs/${activity.runId}/submit-pin`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code: code.trim() }),
+      body: JSON.stringify({ code: entered }),
     });
     const data = await res.json();
     setPending(false);
@@ -198,17 +199,13 @@ function ActivityCard({
       </CardHeader>
       <CardContent className="space-y-2">
         {activity.type === "pin_code" && (
-          <div className="flex gap-2">
-            <Input
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && submitPin()}
-              placeholder="Код"
-            />
-            <Button onClick={submitPin} disabled={pending}>
-              Ввести
-            </Button>
-          </div>
+          <PinPad
+            length={activity.pinLength ?? 4}
+            value={code}
+            onChange={setCode}
+            onComplete={submitPin}
+            disabled={pending}
+          />
         )}
 
         {activity.type === "group_vote" && (

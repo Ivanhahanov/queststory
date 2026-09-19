@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { groupVoteConfig } from "@/lib/types";
+import { groupVoteConfig, pinCodeConfig } from "@/lib/types";
 import { buildVoteResults } from "@/lib/vote-results";
 
 export async function GET(_req: Request, { params }: { params: Promise<{ runId: string }> }) {
@@ -35,6 +35,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ runId: 
     name: template.name,
     instructions: template.instructions,
     options: template.type === "group_vote" ? groupVoteConfig(template.config).options : undefined,
+    pinLength: template.type === "pin_code" ? pinCodeConfig(template.config).correctCode.length || 4 : undefined,
     results,
     accentColor: game?.accent_color ?? "#8b5cf6",
   });

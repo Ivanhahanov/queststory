@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { groupVoteConfig } from "@/lib/types";
+import { groupVoteConfig, pinCodeConfig } from "@/lib/types";
 import { buildVoteResults } from "@/lib/vote-results";
 
 export async function GET(_req: Request, { params }: { params: Promise<{ gameId: string }> }) {
@@ -59,6 +59,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ gameId:
         name: t.name,
         instructions: t.instructions,
         options: t.type === "group_vote" ? groupVoteConfig(t.config).options : undefined,
+        pinLength: t.type === "pin_code" ? pinCodeConfig(t.config).correctCode.length || 4 : undefined,
         results:
           t.type === "group_vote"
             ? buildVoteResults(t.results_visibility, submissionsByRun.get(r.id) ?? [], playerNameById)

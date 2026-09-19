@@ -18,7 +18,7 @@ import {
 const NO_GOAL = "none";
 
 const TYPE_LABEL: Record<string, string> = {
-  pin_code: "PIN / код-слово",
+  pin_code: "PIN-код",
   photo_approval: "Фото-подтверждение",
   group_vote: "Групповое голосование",
 };
@@ -145,11 +145,12 @@ export function ActivityCard({
 
         {activity.type === "pin_code" && (
           <div className="space-y-1">
-            <Label className="text-xs">Правильный код</Label>
+            <Label className="text-xs">Правильный код (только цифры)</Label>
             <Input
               defaultValue={pinCodeConfig(activity.config).correctCode}
               placeholder="1234"
-              onBlur={(e) => patch({ config: { correctCode: e.target.value } })}
+              inputMode="numeric"
+              onBlur={(e) => patch({ config: { correctCode: e.target.value.replace(/\D/g, "") } })}
               className="max-w-40"
             />
           </div>

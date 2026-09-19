@@ -3,7 +3,7 @@
 import { use, useEffect, useState } from "react";
 import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PinPad } from "@/components/pin-pad";
 import { gameThemeStyle } from "@/lib/theme-color";
 import { ThemeColorSync } from "@/components/theme-color-sync";
 import type { VoteResults } from "@/lib/vote-results";
@@ -14,6 +14,7 @@ type KioskInfo = {
   name: string;
   instructions: string;
   options?: string[];
+  pinLength?: number;
   results?: VoteResults;
   accentColor: string;
 };
@@ -71,14 +72,13 @@ export default function KioskPage({ params }: { params: Promise<{ runId: string 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runId]);
 
-  async function submitPin() {
-    if (!code.trim()) return;
+  async function submitPin(entered: string) {
     setPending(true);
     setResult(null);
     const res = await fetch(`/api/activity-runs/${runId}/submit-pin`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code: code.trim() }),
+      body: JSON.stringify({ code: entered }),
     });
     const data = await res.json();
     setResult(data.correct ? "correct" : "incorrect");
@@ -122,22 +122,18 @@ export default function KioskPage({ params }: { params: Promise<{ runId: string 
             </div>
           ) : (
             <>
-              <Input
-                autoFocus
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && submitPin()}
-                placeholder="Код"
-                className="h-16 text-center text-2xl tracking-widest"
-              />
               {result === "incorrect" && (
                 <p className="flex items-center justify-center gap-1.5 text-destructive">
                   <X className="size-5" /> Неверный код, попробуйте ещё раз
                 </p>
               )}
-              <Button className="h-14 w-full text-lg" onClick={submitPin} disabled={pending}>
-                Ввести
-              </Button>
+              <PinPad
+                length={info.pinLength ?? 4}
+                value={code}
+                onChange={setCode}
+                onComplete={submitPin}
+                disabled={pending}
+              />
             </>
           )}
         </div>

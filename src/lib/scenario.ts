@@ -177,7 +177,7 @@ export function buildScenarioPrompt(theme: string, playerCount: number) {
 - gender — одно из: male, female, any (any — роль без привязки к полу).
 - avatar_style — одно из: ${DICEBEAR_STYLES.map((s) => s.id).join(", ")}.
 - effect_templates[].type — одно из: status_label, secret_clue, goal_lock, points.
-- activity_templates[].type — одно из: pin_code (config: {"correctCode": "1234"}), photo_approval (config: {}), group_vote (config: {"options": ["...", "..."]}).
+- activity_templates[].type — одно из: pin_code (config: {"correctCode": "1234"}, только цифры), photo_approval (config: {}), group_vote (config: {"options": ["...", "..."]}).
 - unlock_round — точное название раунда из массива rounds, либо null, если цель открыта с самого начала.
 - Ролей должно быть ровно ${playerCount}, у каждой минимум одна личная цель.
 - secret — конкретная тайна персонажа (1-3 предложения), а не пересказ description: то, что он скрывает от остальных и ради чего игроки будут искать повод поговорить друг с другом. Не повторяй в description то, что уже написано в secret.
