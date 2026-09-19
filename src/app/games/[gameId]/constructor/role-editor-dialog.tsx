@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Eye, Globe2, Lock, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useSupabaseClient } from "@/hooks/use-supabase";
@@ -52,6 +52,7 @@ export function RoleEditorDialog({
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [uploadingPortrait, setUploadingPortrait] = useState(false);
+  const previewCloseButtonRef = useRef<HTMLButtonElement>(null);
 
   async function patchRole(update: Partial<Role>) {
     if (!role) return;
@@ -221,11 +222,19 @@ export function RoleEditorDialog({
         <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
           <DialogContent
             showCloseButton={false}
+            initialFocus={previewCloseButtonRef}
             className="top-0 right-0 bottom-0 left-0 flex h-dvh w-full max-w-none translate-x-0 translate-y-0 flex-col overflow-hidden rounded-none border-none bg-transparent p-0 shadow-none ring-0 sm:max-w-none"
           >
             <DialogTitle className="sr-only">Предпросмотр карточки: {role.name}</DialogTitle>
             <DialogDescription className="sr-only">Как карточка персонажа выглядит у игрока</DialogDescription>
-            <CharacterCard game={game} role={role} goals={scopedGoals} onClose={() => setPreviewOpen(false)} />
+            <CharacterCard
+              game={game}
+              role={role}
+              goals={scopedGoals}
+              open={previewOpen}
+              onClose={() => setPreviewOpen(false)}
+              closeButtonRef={previewCloseButtonRef}
+            />
           </DialogContent>
         </Dialog>
       )}

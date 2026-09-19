@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Coins } from "lucide-react";
 import { roleAvatarUrl } from "@/lib/avatar-options";
 import { CharacterCard } from "@/components/character-card";
@@ -21,6 +21,7 @@ export function RoleHeader({
   goals: VisibleGoal[];
 }) {
   const [open, setOpen] = useState(false);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   return (
     <>
@@ -57,11 +58,19 @@ export function RoleHeader({
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogContent
             showCloseButton={false}
+            initialFocus={closeButtonRef}
             className="top-0 right-0 bottom-0 left-0 flex h-dvh w-full max-w-none translate-x-0 translate-y-0 flex-col overflow-hidden rounded-none border-none bg-transparent p-0 shadow-none ring-0 sm:max-w-none"
           >
             <DialogTitle className="sr-only">Карточка персонажа: {role.name}</DialogTitle>
             <DialogDescription className="sr-only">История, цели и описание вашего персонажа</DialogDescription>
-            <CharacterCard game={game} role={role} goals={goals} onClose={() => setOpen(false)} />
+            <CharacterCard
+              game={game}
+              role={role}
+              goals={goals}
+              open={open}
+              onClose={() => setOpen(false)}
+              closeButtonRef={closeButtonRef}
+            />
           </DialogContent>
         </Dialog>
       )}

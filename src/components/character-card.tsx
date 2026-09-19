@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ComponentType } from "react";
+import { useEffect, useRef, useState, type ComponentType } from "react";
 import { PT_Serif } from "next/font/google";
 import { BookOpen, Eye, ListChecks, Lock, Target, UserRound, XIcon } from "lucide-react";
 import { roleAvatarUrl } from "@/lib/avatar-options";
@@ -202,18 +202,37 @@ export function CharacterCard({
   game,
   role,
   goals,
+  open,
   onClose,
+  closeButtonRef,
 }: {
   game: { story_synopsis: string; common_goal: string; card_frame: string };
   role: Role;
   goals: CardGoal[];
+  open?: boolean;
   onClose?: () => void;
+  closeButtonRef?: React.RefObject<HTMLButtonElement | null>;
 }) {
   const frame = normalizeFrame(game.card_frame);
   const theme = CARD_THEME[frame];
   const roleTint = { backgroundColor: `${role.color}26`, color: role.color };
   const neutralTint = { backgroundColor: "color-mix(in srgb, currentColor 12%, transparent)" };
   const primaryTint = { backgroundColor: "color-mix(in srgb, var(--primary) 15%, transparent)", color: "var(--primary)" };
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Dialog остаётся смонтированным между открытиями (анимация закрытия) —
+  // без явного сброса скролл-позиция карточки "запоминает" место, на
+  // котором её в прошлый раз закрыли, и при следующем открытии показывает
+  // не портрет сверху, а произвольное место посередине/внизу.
+  useEffect(() => {
+    if (!open) return;
+    // Base UI переносит фокус внутрь попапа при открытии, а браузер сам
+    // прокручивает ближайший скролл-контейнер к сфокусированному элементу
+    // — это может произойти уже после нашего сброса. rAF откладывает сброс
+    // на кадр позже, чтобы он выигрывал гонку.
+    const id = requestAnimationFrame(() => scrollRef.current?.scrollTo({ top: 0 }));
+    return () => cancelAnimationFrame(id);
+  }, [open]);
 
   const sections = [
     game.story_synopsis && (
@@ -276,7 +295,7 @@ export function CharacterCard({
           высоты (h-full) через цепочку flex/grid-родителей Dialog, которая
           на части мобильных браузеров не досчитывалась до реального низа
           экрана (виден зазор перед системным индикатором свайпа). */}
-      <div className={cn("fixed inset-0 overflow-y-auto rounded-[1.75rem] bg-black", theme.outer)}>
+      <div ref={scrollRef} className={cn("fixed inset-0 overflow-y-auto rounded-[1.75rem] bg-black", theme.outer)}>
         <div className={cn("relative mx-auto min-h-full w-full max-w-md", theme.surface)}>
           {/* Персонаж должен быть виден сразу при открытии карточки */}
           <div className={cn("relative", frame === "noir" && "[filter:grayscale(0.15)_contrast(1.05)]")}>
@@ -305,6 +324,7 @@ export function CharacterCard({
       <FrameCorners frame={frame} />
       {onClose && (
         <button
+          ref={closeButtonRef}
           type="button"
           onClick={onClose}
           aria-label="Закрыть"
