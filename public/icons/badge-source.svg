@@ -2,7 +2,8 @@
   <!-- Monochrome silhouette for Android's status-bar notification badge — the
        OS recolors this using its alpha channel only, so it must be a solid
        shape on a fully transparent background (no gradients/colors kept). -->
-  <g transform="translate(256 256)" fill="#ffffff">
-    <rect x="-96" y="-136" width="192" height="272" rx="26"/>
+  <g transform="translate(232 232)" fill="none" stroke="#ffffff" stroke-width="44">
+    <circle r="86"/>
+    <line x1="64" y1="64" x2="149" y2="149" stroke-linecap="round"/>
   </g>
 </svg>

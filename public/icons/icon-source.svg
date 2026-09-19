@@ -11,7 +11,8 @@
     </linearGradient>
   </defs>
   <rect width="512" height="512" fill="url(#bg)"/>
-  <g transform="translate(256 256)">
-    <rect x="-96" y="-136" width="192" height="272" rx="26" fill="url(#mark)"/>
+  <g transform="translate(232 232)">
+    <circle r="86" fill="none" stroke="url(#mark)" stroke-width="44"/>
+    <line x1="64" y1="64" x2="149" y2="149" stroke="url(#mark)" stroke-width="44" stroke-linecap="round"/>
   </g>
 </svg>
