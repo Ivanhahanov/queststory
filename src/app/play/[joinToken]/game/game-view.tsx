@@ -157,6 +157,7 @@ export function GameView({
         points={points}
         game={game}
         goals={goals.filter((g) => !lockedGoalIds.has(g.id))}
+        effects={effects}
       />
       <InstallAppBanner playerId={player.id} />
       <NotificationsBanner playerId={player.id} />

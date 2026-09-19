@@ -30,21 +30,32 @@ export function PlayerCard({
 
   const labelEffects = effects
     .map((e) => ({ e, template: effectTemplates.find((t) => t.id === e.effect_template_id) }))
-    .filter((x) => x.template?.type === "status_label");
+    .filter((x) => x.template?.type === "status_label")
+    .sort((a, b) => +new Date(b.e.applied_at) - +new Date(a.e.applied_at));
+  const latest = labelEffects[0];
+  const latestLabel = latest && (latest.e.custom_text || latest.template?.default_text || latest.template?.name);
 
   return (
     <Card className="cursor-pointer gap-2 py-3 transition-colors hover:border-primary/50" onClick={onClick}>
       <CardContent className="flex items-center gap-3">
         <div className="relative shrink-0">
           <div
-            className="flex size-12 items-center justify-center overflow-hidden rounded-xl border-2 bg-muted"
-            style={{ borderColor: role?.color ?? "var(--border)" }}
+            className="relative flex size-12 items-center justify-center overflow-hidden rounded-xl border-2 bg-muted transition-colors"
+            style={{ borderColor: latest?.template?.color ?? role?.color ?? "var(--border)" }}
           >
             {role ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={roleAvatarUrl(role)} alt={role.name} className="size-full object-cover" />
             ) : (
               <span className="text-xs text-muted-foreground">?</span>
+            )}
+            {latestLabel && (
+              <div
+                className="absolute inset-x-0 bottom-0 truncate px-0.5 text-center text-[7px] leading-tight font-semibold text-white"
+                style={{ backgroundColor: `${latest.template?.color}d9` }}
+              >
+                {latestLabel}
+              </div>
             )}
           </div>
           <span
@@ -65,9 +76,9 @@ export function PlayerCard({
             )}
           </div>
           <p className="truncate text-xs text-muted-foreground">{role?.name ?? "Роль не назначена"}</p>
-          {labelEffects.length > 0 && (
+          {labelEffects.length > 1 && (
             <div className="mt-1 flex flex-wrap gap-1">
-              {labelEffects.map(({ e, template }) => (
+              {labelEffects.slice(1).map(({ e, template }) => (
                 <Badge
                   key={e.id}
                   style={{

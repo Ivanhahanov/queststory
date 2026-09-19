@@ -5,7 +5,7 @@ import { Coins } from "lucide-react";
 import { roleAvatarUrl } from "@/lib/avatar-options";
 import { CharacterCard } from "@/components/character-card";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import type { Game, Role, VisibleGoal } from "@/lib/types";
+import type { Game, PlayerEffectWithTemplate, Role, VisibleGoal } from "@/lib/types";
 
 export function RoleHeader({
   role,
@@ -13,15 +13,24 @@ export function RoleHeader({
   points,
   game,
   goals,
+  effects,
 }: {
   role: Role | null;
   displayName: string | null;
   points: number;
   game: Game;
   goals: VisibleGoal[];
+  effects: PlayerEffectWithTemplate[];
 }) {
   const [open, setOpen] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Отсортированы по applied_at desc и на сервере, и после рефетча —
+  // первый в списке всегда самый свежий эффект.
+  const labelEffects = effects.filter((e) => e.effect_templates?.type === "status_label");
+  const latestEffect = labelEffects[0];
+  const effectColor = latestEffect?.effect_templates?.color;
+  const effectLabel = latestEffect && (latestEffect.custom_text || latestEffect.effect_templates?.default_text || latestEffect.effect_templates?.name);
 
   return (
     <>
@@ -32,14 +41,27 @@ export function RoleHeader({
         className="flex w-full items-center gap-4 rounded-2xl border border-border/60 bg-card p-4 text-left transition-colors enabled:hover:bg-muted/40 enabled:active:scale-[0.99]"
       >
         <div
-          className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2"
-          style={{ borderColor: role?.color ?? "var(--border)" }}
+          className="relative flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2 transition-colors"
+          style={{ borderColor: effectColor ?? role?.color ?? "var(--border)" }}
         >
           {role ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={roleAvatarUrl(role)} alt={role.name} className="size-full object-cover" />
           ) : (
             <span className="text-xs text-muted-foreground">Роль скоро будет назначена</span>
+          )}
+          {effectLabel && (
+            <div
+              className="absolute inset-x-0 bottom-0 truncate px-1 py-0.5 text-center text-[9px] leading-tight font-semibold text-white"
+              style={{ backgroundColor: `${effectColor}d9` }}
+            >
+              {effectLabel}
+            </div>
+          )}
+          {labelEffects.length > 1 && (
+            <span className="absolute top-0.5 right-0.5 flex size-4 items-center justify-center rounded-full bg-black/70 text-[8px] font-bold text-white">
+              +{labelEffects.length - 1}
+            </span>
           )}
         </div>
         <div className="min-w-0 flex-1 space-y-1">
