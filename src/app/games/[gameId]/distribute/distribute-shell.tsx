@@ -88,6 +88,21 @@ export function DistributeShell({
     setPlayers((prev) => prev.filter((p) => p.id !== player.id));
   }
 
+  // На iOS установленное на «Домой» приложение живёт в своём хранилище,
+  // отдельном от Safari — если игрок сначала зашёл в браузере, а потом
+  // поставил приложение, старая анонимная сессия туда не попадает, и по
+  // той же ссылке войти уже нельзя ("уже занято на другом устройстве").
+  // Ссылка (join_token) остаётся той же — сбрасываем только привязку.
+  async function resetDevice(player: Player) {
+    const { data } = await supabase
+      .from("players")
+      .update({ auth_user_id: null })
+      .eq("id", player.id)
+      .select()
+      .single();
+    if (data) setPlayers((prev) => prev.map((p) => (p.id === data.id ? data : p)));
+  }
+
   const assigned = players
     .map((player) => ({ player, role: roles.find((r) => r.id === player.role_id) }))
     .filter((x): x is { player: Player; role: Role } => !!x.role);
@@ -143,6 +158,7 @@ export function DistributeShell({
                 role={role}
                 onReopenQr={() => setHandoffPlayer(player)}
                 onRegenerateLink={() => regenerateLink(player)}
+                onResetDevice={() => resetDevice(player)}
                 onDelete={() => deletePlayer(player)}
               />
             ))}

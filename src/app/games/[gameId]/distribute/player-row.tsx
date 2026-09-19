@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy, MoreVertical, QrCode, RefreshCw, Trash2 } from "lucide-react";
+import { Check, Copy, MoreVertical, QrCode, RefreshCw, Smartphone, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -18,12 +18,14 @@ export function PlayerRow({
   role,
   onReopenQr,
   onRegenerateLink,
+  onResetDevice,
   onDelete,
 }: {
   player: Player;
   role: Role;
   onReopenQr: () => void;
   onRegenerateLink: () => void;
+  onResetDevice: () => void;
   onDelete: () => void;
 }) {
   const [copied, setCopied] = useState(false);
@@ -67,6 +69,11 @@ export function PlayerRow({
           <DropdownMenuItem onClick={onRegenerateLink}>
             <RefreshCw /> Перевыпустить ссылку
           </DropdownMenuItem>
+          {player.auth_user_id && (
+            <DropdownMenuItem onClick={onResetDevice}>
+              <Smartphone /> Сбросить привязку к устройству
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem variant="destructive" onClick={onDelete}>
             <Trash2 /> Удалить
           </DropdownMenuItem>

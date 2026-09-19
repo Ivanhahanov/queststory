@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Send, Trash2 } from "lucide-react";
+import { Send, Smartphone, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { useSupabaseClient } from "@/hooks/use-supabase";
 import {
   Dialog,
@@ -106,6 +107,13 @@ export function PlayerDrawer({
     await supabase.from("messages").delete().eq("id", id);
   }
 
+  // См. распределение ролей — та же кнопка для случая, когда игрок теряет
+  // доступ уже посреди игры (сменил телефон, поставил приложение поздно).
+  async function resetDevice() {
+    await supabase.from("players").update({ auth_user_id: null }).eq("id", player!.id);
+    toast("Привязка к устройству сброшена — можно снова открыть ту же ссылку");
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex max-h-[85vh] flex-col sm:max-w-lg">
@@ -120,7 +128,7 @@ export function PlayerDrawer({
                 <img src={roleAvatarUrl(role)} alt={role.name} className="size-full object-cover" />
               )}
             </div>
-            <div className="text-left">
+            <div className="min-w-0 flex-1 text-left">
               <DialogTitle>{player.display_name ?? "Ждём игрока"}</DialogTitle>
               <DialogDescription>{role?.name ?? "Роль не назначена"}</DialogDescription>
             </div>
@@ -128,6 +136,12 @@ export function PlayerDrawer({
         </DialogHeader>
 
         <div className="-mx-4 flex-1 space-y-5 overflow-y-auto px-4">
+          {player.auth_user_id && (
+            <Button variant="outline" size="sm" onClick={resetDevice}>
+              <Smartphone /> Сбросить привязку к устройству
+            </Button>
+          )}
+
           <div className="space-y-1">
             <h3 className="text-sm font-medium text-muted-foreground">Цели</h3>
             {applicableGoals.length === 0 && <p className="text-sm text-muted-foreground">Нет целей</p>}
