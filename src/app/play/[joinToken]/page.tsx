@@ -1,7 +1,6 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useSupabaseClient } from "@/hooks/use-supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +9,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 export default function JoinPage({ params }: { params: Promise<{ joinToken: string }> }) {
   const { joinToken } = use(params);
-  const router = useRouter();
   const supabase = useSupabaseClient();
 
   const [name, setName] = useState("");
@@ -35,7 +33,9 @@ export default function JoinPage({ params }: { params: Promise<{ joinToken: stri
           .maybeSingle();
 
         if (data && !cancelled) {
-          router.replace(`/play/${joinToken}/game`);
+          // Жёсткая навигация, а не router.replace — клиентский RSC-переход
+          // может уйти раньше, чем Safari зафиксирует куки новой сессии.
+          window.location.href = `/play/${joinToken}/game`;
           return;
         }
       }
@@ -47,7 +47,7 @@ export default function JoinPage({ params }: { params: Promise<{ joinToken: stri
     return () => {
       cancelled = true;
     };
-  }, [joinToken, router, supabase]);
+  }, [joinToken, supabase]);
 
   async function join() {
     const trimmed = name.trim();
@@ -84,7 +84,8 @@ export default function JoinPage({ params }: { params: Promise<{ joinToken: stri
       return;
     }
 
-    router.replace(`/play/${joinToken}/game`);
+    // Жёсткая навигация — см. комментарий выше, та же причина.
+    window.location.href = `/play/${joinToken}/game`;
   }
 
   if (checking) return null;
