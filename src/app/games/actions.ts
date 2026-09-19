@@ -90,6 +90,7 @@ export async function importScenario(jsonText: string): Promise<{ error: string 
     name: r.name,
     description: r.description,
     secret: r.secret,
+    gender: r.gender,
     avatar_style: r.avatar_style,
     avatar_seed: randomUUID(),
     color: r.color,

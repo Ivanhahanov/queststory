@@ -7,6 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { roleAvatarUrl } from "@/lib/avatar-options";
+import { GENDER_SHORT_LABEL, normalizeGender } from "@/lib/gender";
 import type { Role } from "@/lib/types";
 
 export function RolePickerDialog({
@@ -44,7 +45,8 @@ export function RolePickerDialog({
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={roleAvatarUrl(role)} alt="" className="size-full object-cover" />
               </div>
-              <span className="font-medium">{role.name}</span>
+              <span className="min-w-0 flex-1 truncate font-medium">{role.name}</span>
+              <span className="shrink-0 text-xs text-muted-foreground">{GENDER_SHORT_LABEL[normalizeGender(role.gender)]}</span>
             </button>
           ))}
         </div>

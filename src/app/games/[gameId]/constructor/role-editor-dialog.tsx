@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { parseAvatarOptions, roleAvatarUrl } from "@/lib/avatar-options";
+import { GENDER_LABEL, GENDER_OPTIONS, normalizeGender } from "@/lib/gender";
 import { cn } from "@/lib/utils";
 import { CharacterCard } from "@/components/character-card";
 import type { Game, Goal, Role, Round } from "@/lib/types";
@@ -144,6 +145,24 @@ export function RoleEditorDialog({
           {role && (
             <div className="space-y-4">
               <Input defaultValue={role.name} placeholder="Имя роли" onBlur={(e) => patchRole({ name: e.target.value })} />
+
+              <div className="flex items-center gap-2">
+                {GENDER_OPTIONS.map((g) => (
+                  <button
+                    key={g}
+                    type="button"
+                    onClick={() => patchRole({ gender: g })}
+                    className={cn(
+                      "rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+                      normalizeGender(role.gender) === g
+                        ? "border-primary bg-primary/15 text-primary"
+                        : "border-border/60 text-muted-foreground hover:bg-muted/50",
+                    )}
+                  >
+                    {GENDER_LABEL[g]}
+                  </button>
+                ))}
+              </div>
 
               <Textarea
                 defaultValue={role.description}

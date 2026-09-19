@@ -37,6 +37,7 @@ const roleSchema = z.object({
   name: shortName,
   description: looseString(4000),
   secret: looseString(2000),
+  gender: z.enum(["male", "female", "any"]).default("any"),
   avatar_style: z.enum(AVATAR_STYLE_IDS).default("adventurer"),
   color: hexColor.default("#e0973f"),
   goals: z.array(goalSchema).max(40),
@@ -109,6 +110,7 @@ export function buildScenario(input: {
       name: role.name,
       description: role.description,
       secret: role.secret,
+      gender: (role.gender ?? "any") as Scenario["roles"][number]["gender"],
       avatar_style: role.avatar_style,
       color: role.color,
       goals: goalsFor(role.id),
@@ -152,6 +154,7 @@ export function buildScenarioPrompt(theme: string, playerCount: number) {
       "name": "имя персонажа",
       "description": "предыстория, характер, отношения с другими персонажами",
       "secret": "тайна этого персонажа — то, что он скрывает от остальных",
+      "gender": "any",
       "avatar_style": "adventurer",
       "color": "#e0973f",
       "goals": [
@@ -171,6 +174,7 @@ export function buildScenarioPrompt(theme: string, playerCount: number) {
 }
 
 Правила:
+- gender — одно из: male, female, any (any — роль без привязки к полу).
 - avatar_style — одно из: ${DICEBEAR_STYLES.map((s) => s.id).join(", ")}.
 - effect_templates[].type — одно из: status_label, secret_clue, goal_lock, points.
 - activity_templates[].type — одно из: pin_code (config: {"correctCode": "1234"}), photo_approval (config: {}), group_vote (config: {"options": ["...", "..."]}).

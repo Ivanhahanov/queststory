@@ -589,6 +589,7 @@ export type Database = {
           created_at: string
           description: string
           game_id: string
+          gender: string
           id: string
           name: string
           portrait_url: string | null
@@ -602,6 +603,7 @@ export type Database = {
           created_at?: string
           description?: string
           game_id: string
+          gender?: string
           id?: string
           name: string
           portrait_url?: string | null
@@ -615,6 +617,7 @@ export type Database = {
           created_at?: string
           description?: string
           game_id?: string
+          gender?: string
           id?: string
           name?: string
           portrait_url?: string | null

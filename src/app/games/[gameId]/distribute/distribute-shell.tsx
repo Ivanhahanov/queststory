@@ -5,6 +5,8 @@ import { Shuffle, UserPlus } from "lucide-react";
 import { useSupabaseClient } from "@/hooks/use-supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { GENDER_LABEL, GENDER_OPTIONS, normalizeGender, type RoleGender } from "@/lib/gender";
+import { cn } from "@/lib/utils";
 import type { Player, Role } from "@/lib/types";
 import { PlayerRow } from "./player-row";
 import { RolePickerDialog } from "./role-picker-dialog";
@@ -24,6 +26,7 @@ export function DistributeShell({
   const [players, setPlayers] = useState(initialPlayers);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [handoffPlayer, setHandoffPlayer] = useState<Player | null>(null);
+  const [genderFilter, setGenderFilter] = useState<RoleGender>("any");
 
   useEffect(() => {
     const channel = supabase
@@ -51,6 +54,10 @@ export function DistributeShell({
   }, [gameId, supabase]);
 
   const freeRoles = roles.filter((r) => !players.some((p) => p.role_id === r.id));
+  // "any"-роли годятся под любой фильтр — их не прячем ни при М, ни при Ж.
+  const filteredFreeRoles = freeRoles.filter(
+    (r) => genderFilter === "any" || normalizeGender(r.gender) === "any" || normalizeGender(r.gender) === genderFilter,
+  );
 
   async function createInvite(roleId: string) {
     const { data } = await supabase
@@ -69,8 +76,8 @@ export function DistributeShell({
   }
 
   function assignRandom() {
-    if (freeRoles.length === 0) return;
-    const pick = freeRoles[Math.floor(Math.random() * freeRoles.length)];
+    if (filteredFreeRoles.length === 0) return;
+    const pick = filteredFreeRoles[Math.floor(Math.random() * filteredFreeRoles.length)];
     createInvite(pick.id);
   }
 
@@ -116,11 +123,32 @@ export function DistributeShell({
         </p>
       </div>
 
+      {roles.length > 0 && (
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">Пол игрока:</span>
+          {GENDER_OPTIONS.map((g) => (
+            <button
+              key={g}
+              type="button"
+              onClick={() => setGenderFilter(g)}
+              className={cn(
+                "rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+                genderFilter === g
+                  ? "border-primary bg-primary/15 text-primary"
+                  : "border-border/60 text-muted-foreground hover:bg-muted/50",
+              )}
+            >
+              {GENDER_LABEL[g]}
+            </button>
+          ))}
+        </div>
+      )}
+
       <div className="grid grid-cols-2 gap-3">
-        <Button size="lg" onClick={() => setPickerOpen(true)} disabled={freeRoles.length === 0}>
+        <Button size="lg" onClick={() => setPickerOpen(true)} disabled={filteredFreeRoles.length === 0}>
           <UserPlus /> Выдать роль
         </Button>
-        <Button size="lg" variant="secondary" onClick={assignRandom} disabled={freeRoles.length === 0}>
+        <Button size="lg" variant="secondary" onClick={assignRandom} disabled={filteredFreeRoles.length === 0}>
           <Shuffle /> Случайная роль
         </Button>
       </div>
@@ -166,7 +194,7 @@ export function DistributeShell({
         </Card>
       )}
 
-      <RolePickerDialog open={pickerOpen} onOpenChange={setPickerOpen} roles={freeRoles} onPick={pickRole} />
+      <RolePickerDialog open={pickerOpen} onOpenChange={setPickerOpen} roles={filteredFreeRoles} onPick={pickRole} />
       <QrHandoffDialog
         player={handoffPlayer}
         onClose={() => setHandoffPlayer(null)}

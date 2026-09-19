@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { randomAvatarSeed } from "@/lib/dicebear";
 import { roleAvatarUrl } from "@/lib/avatar-options";
+import { GENDER_SHORT_LABEL, normalizeGender } from "@/lib/gender";
 import type { Game, Goal, Role, Round } from "@/lib/types";
 import { RoleEditorDialog } from "./role-editor-dialog";
 
@@ -109,7 +110,9 @@ export function RolesTab({
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate font-medium">{role.name}</p>
-                <p className="text-xs text-muted-foreground">{count} {count === 1 ? "цель" : "целей"}</p>
+                <p className="text-xs text-muted-foreground">
+                  {GENDER_SHORT_LABEL[normalizeGender(role.gender)]} · {count} {count === 1 ? "цель" : "целей"}
+                </p>
               </div>
               <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
             </button>
