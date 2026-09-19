@@ -80,7 +80,7 @@ export function GoalsList({
                 <Circle className="mt-0.5 size-5 shrink-0 text-muted-foreground" />
               )}
               <div className="min-w-0">
-                <p className={cn("text-sm font-medium", goal.completed && "line-through")}>{goal.title}</p>
+                <p className="text-sm font-medium">{goal.title}</p>
                 {goal.description && !locked && (
                   <p className="text-xs text-muted-foreground">{goal.description}</p>
                 )}
