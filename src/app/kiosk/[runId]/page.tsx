@@ -127,13 +127,14 @@ export default function KioskPage({ params }: { params: Promise<{ runId: string 
                   <X className="size-5" /> Неверный код, попробуйте ещё раз
                 </p>
               )}
-              <PinPad
-                length={info.pinLength ?? 4}
-                value={code}
-                onChange={setCode}
-                onComplete={submitPin}
-                disabled={pending}
-              />
+              <PinPad length={info.pinLength ?? 4} value={code} onChange={setCode} disabled={pending} />
+              <Button
+                className="h-14 w-full text-lg"
+                onClick={() => submitPin(code)}
+                disabled={pending || code.length !== (info.pinLength ?? 4)}
+              >
+                Ввести
+              </Button>
             </>
           )}
         </div>

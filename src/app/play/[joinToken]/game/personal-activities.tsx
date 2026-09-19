@@ -199,13 +199,16 @@ function ActivityCard({
       </CardHeader>
       <CardContent className="space-y-2">
         {activity.type === "pin_code" && (
-          <PinPad
-            length={activity.pinLength ?? 4}
-            value={code}
-            onChange={setCode}
-            onComplete={submitPin}
-            disabled={pending}
-          />
+          <div className="space-y-3">
+            <PinPad length={activity.pinLength ?? 4} value={code} onChange={setCode} disabled={pending} />
+            <Button
+              className="w-full"
+              onClick={() => submitPin(code)}
+              disabled={pending || code.length !== (activity.pinLength ?? 4)}
+            >
+              Ввести
+            </Button>
+          </div>
         )}
 
         {activity.type === "group_vote" && (

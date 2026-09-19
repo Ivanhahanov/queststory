@@ -9,13 +9,11 @@ export function PinPad({
   length,
   value,
   onChange,
-  onComplete,
   disabled,
 }: {
   length: number;
   value: string;
   onChange: (value: string) => void;
-  onComplete?: (value: string) => void;
   disabled?: boolean;
 }) {
   function press(key: string) {
@@ -25,9 +23,7 @@ export function PinPad({
       return;
     }
     if (value.length >= length) return;
-    const next = value + key;
-    onChange(next);
-    if (next.length === length) onComplete?.(next);
+    onChange(value + key);
   }
 
   return (
