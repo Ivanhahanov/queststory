@@ -2,16 +2,11 @@
 
 import { useState, type ComponentType } from "react";
 import { PT_Serif } from "next/font/google";
-import { BookOpen, Eye, ListChecks, Lock, Target, UserRound, XIcon } from "lucide-react";
+import { BookOpen, ListChecks, Lock, Target, UserRound, XIcon } from "lucide-react";
 import { roleAvatarUrl } from "@/lib/avatar-options";
 import { cn } from "@/lib/utils";
 import type { Role } from "@/lib/types";
 
-// Плёнка поверх скрытой тайны — статичное зерно (SVG feTurbulence, без
-// анимации позиции — раньше дёргалось между кадрами и рябило) + медленный
-// диагональный блик поверх для лёгкого премиального "фольгированного" вида.
-const SECRET_GRAIN_BG =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
 
 type CardGoal = { id: string; title: string; description: string };
 type IconType = ComponentType<{ className?: string }>;
@@ -169,32 +164,18 @@ function SecretSection({
       <SectionHeading icon={Lock} badgeStyle={badgeStyle}>
         Тайна
       </SectionHeading>
-      <button
-        type="button"
-        onClick={() => setRevealed((v) => !v)}
-        className="relative block w-full overflow-hidden rounded-lg text-left transition-transform active:scale-[0.99]"
-        style={{ backgroundColor: `${roleColor}1a`, boxShadow: `inset 0 0 0 1px ${roleColor}40` }}
-      >
-        <p className={cn("p-3 text-sm whitespace-pre-line text-foreground", !revealed && "opacity-0 select-none")}>{secret}</p>
-        {!revealed && (
-          <div
-            className="absolute inset-0 flex flex-col items-center justify-center gap-1 text-center text-xs font-medium text-white/90"
-            style={{ backgroundImage: SECRET_GRAIN_BG, backgroundColor: "rgba(10,10,12,0.9)", opacity: 0.94 }}
-          >
-            <div
-              className="pointer-events-none absolute inset-0"
-              style={{
-                backgroundImage: "linear-gradient(75deg, transparent 42%, rgba(255,255,255,0.12) 50%, transparent 58%)",
-                backgroundSize: "220% 100%",
-                animation: "secret-shimmer 4s ease-in-out infinite",
-              }}
-            />
-            <Eye className="size-4" />
-            Нажмите, чтобы раскрыть
-          </div>
-        )}
+      {/* Размытие — единственное, что реально глушит буквы (заливка или
+          узор внутри контура текста цвет меняют, но силуэт остаётся
+          читаемым). Никакой прямоугольной плашки — просто текст, как в
+          Telegram-спойлере, с плавным наведением резкости при раскрытии. */}
+      <button type="button" onClick={() => setRevealed((v) => !v)} className="block w-full text-left">
+        <p
+          className={cn("text-sm whitespace-pre-line transition-[filter] duration-500", revealed ? "text-foreground" : "select-none")}
+          style={revealed ? undefined : { color: roleColor, filter: "blur(7px)" }}
+        >
+          {secret}
+        </p>
       </button>
-      {revealed && <p className="px-1 text-xs text-muted-foreground">Нажмите ещё раз, чтобы снова скрыть</p>}
     </div>
   );
 }
