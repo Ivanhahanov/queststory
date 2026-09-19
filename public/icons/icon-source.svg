@@ -1,21 +1,17 @@
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <radialGradient id="bg" cx="26%" cy="14%" r="100%">
-      <stop offset="0%" stop-color="#1a2420"/>
-      <stop offset="60%" stop-color="#0f1613"/>
-      <stop offset="100%" stop-color="#080b09"/>
+      <stop offset="0%" stop-color="#1c2320"/>
+      <stop offset="60%" stop-color="#121613"/>
+      <stop offset="100%" stop-color="#0a0c0a"/>
     </radialGradient>
     <linearGradient id="mark" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#5eeba0"/>
-      <stop offset="100%" stop-color="#12a866"/>
+      <stop offset="0%" stop-color="#9db8a6"/>
+      <stop offset="100%" stop-color="#5c7c68"/>
     </linearGradient>
   </defs>
   <rect width="512" height="512" fill="url(#bg)"/>
-
   <g transform="translate(256 256)">
-    <circle cx="0" cy="-58" r="86" fill="url(#mark)"/>
-    <path d="M -40 24 L 40 24 L 24 168 L -24 168 Z" fill="url(#mark)"/>
-    <circle cx="0" cy="-58" r="36" fill="#080b09"/>
-    <path d="M -15 -6 L 15 -6 L 26 110 L -26 110 Z" fill="#080b09"/>
+    <rect x="-96" y="-136" width="192" height="272" rx="26" fill="url(#mark)"/>
   </g>
 </svg>

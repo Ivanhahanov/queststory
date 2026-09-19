@@ -3,7 +3,6 @@
        OS recolors this using its alpha channel only, so it must be a solid
        shape on a fully transparent background (no gradients/colors kept). -->
   <g transform="translate(256 256)" fill="#ffffff">
-    <circle cx="0" cy="-58" r="86"/>
-    <path d="M -40 24 L 40 24 L 24 168 L -24 168 Z"/>
+    <rect x="-96" y="-136" width="192" height="272" rx="26"/>
   </g>
 </svg>
