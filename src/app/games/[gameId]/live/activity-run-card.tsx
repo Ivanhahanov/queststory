@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import { Check, X } from "lucide-react";
+import { Check, Copy, X } from "lucide-react";
+import { toast } from "sonner";
 import { useSupabaseClient } from "@/hooks/use-supabase";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,10 +29,22 @@ export function ActivityRunCard({
   const supabase = useSupabaseClient();
   const kioskUrl =
     typeof window !== "undefined" ? `${window.location.origin}/kiosk/${run.id}` : `/kiosk/${run.id}`;
+  const [copied, setCopied] = useState(false);
 
   async function reviewPhoto(submission: ActivitySubmission, status: "approved" | "rejected") {
     await supabase.from("activity_submissions").update({ status }).eq("id", submission.id);
     if (status === "approved") onResolve();
+  }
+
+  async function copyKioskUrl() {
+    try {
+      await navigator.clipboard.writeText(kioskUrl);
+      setCopied(true);
+      toast("Ссылка скопирована");
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      toast.error("Не удалось скопировать ссылку");
+    }
   }
 
   return (
@@ -42,12 +56,18 @@ export function ActivityRunCard({
         </Button>
       </div>
 
-      {template.type === "pin_code" && template.display_mode === "kiosk" && (
-        <div className="flex items-center gap-3">
+      {template.display_mode === "kiosk" && template.type !== "photo_approval" && (
+        <div className="flex items-center gap-3 rounded-md border border-dashed border-border/60 p-2">
           <div className="rounded-md bg-white p-2">
             <QRCodeSVG value={kioskUrl} size={80} />
           </div>
-          <p className="text-xs break-all text-muted-foreground">{kioskUrl}</p>
+          <div className="min-w-0 flex-1 space-y-0.5">
+            <p className="text-xs font-medium">Откройте эту ссылку на планшете</p>
+            <p className="text-xs break-all text-muted-foreground">{kioskUrl}</p>
+          </div>
+          <Button variant="ghost" size="icon-sm" onClick={copyKioskUrl} title="Скопировать ссылку">
+            {copied ? <Check className="text-emerald-500" /> : <Copy />}
+          </Button>
         </div>
       )}
 

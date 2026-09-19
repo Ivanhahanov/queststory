@@ -67,7 +67,15 @@ export function ActivityCard({
               placeholder="Название активности"
               onBlur={(e) => patch({ name: e.target.value })}
             />
-            <Select value={activity.type} onValueChange={(v) => patch({ type: v ?? undefined })}>
+            <Select
+              value={activity.type}
+              onValueChange={(v) => {
+                if (!v) return;
+                patch(v === "photo_approval" && activity.display_mode === "kiosk"
+                  ? { type: v, display_mode: "personal" }
+                  : { type: v });
+              }}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue>{(value: string) => TYPE_LABEL[value] ?? value}</SelectValue>
               </SelectTrigger>
@@ -104,7 +112,9 @@ export function ActivityCard({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="personal">На телефоне у игрока</SelectItem>
-                <SelectItem value="kiosk">На общем экране (планшет ведущего)</SelectItem>
+                {activity.type !== "photo_approval" && (
+                  <SelectItem value="kiosk">На общем экране (планшет ведущего)</SelectItem>
+                )}
               </SelectContent>
             </Select>
           </div>
