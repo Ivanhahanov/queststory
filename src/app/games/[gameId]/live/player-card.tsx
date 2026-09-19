@@ -1,5 +1,4 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { roleAvatarUrl } from "@/lib/avatar-options";
 import { cn } from "@/lib/utils";
 import type { EffectTemplate, Goal, Player, PlayerEffect, PlayerGoalProgress, Role } from "@/lib/types";
@@ -57,6 +56,11 @@ export function PlayerCard({
                 {latestLabel}
               </div>
             )}
+            {labelEffects.length > 1 && (
+              <span className="absolute top-0.5 right-0.5 flex size-3.5 items-center justify-center rounded-full bg-black/70 text-[7px] font-bold text-white">
+                +{labelEffects.length - 1}
+              </span>
+            )}
           </div>
           <span
             className={cn(
@@ -76,23 +80,6 @@ export function PlayerCard({
             )}
           </div>
           <p className="truncate text-xs text-muted-foreground">{role?.name ?? "Роль не назначена"}</p>
-          {labelEffects.length > 1 && (
-            <div className="mt-1 flex flex-wrap gap-1">
-              {labelEffects.slice(1).map(({ e, template }) => (
-                <Badge
-                  key={e.id}
-                  style={{
-                    backgroundColor: `${template?.color}26`,
-                    color: template?.color ?? undefined,
-                    borderColor: `${template?.color}55`,
-                  }}
-                  className="border text-[0.65rem]"
-                >
-                  {e.custom_text || template?.default_text || template?.name}
-                </Badge>
-              ))}
-            </div>
-          )}
         </div>
       </CardContent>
     </Card>
