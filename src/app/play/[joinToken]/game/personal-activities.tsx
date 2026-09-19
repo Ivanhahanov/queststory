@@ -225,7 +225,6 @@ function ActivityCard({
           <Input
             type="file"
             accept="image/*"
-            capture="environment"
             disabled={pending}
             onChange={(e) => e.target.files?.[0] && submitPhoto(e.target.files[0])}
           />
