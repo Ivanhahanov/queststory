@@ -711,6 +711,7 @@ export type Database = {
         Args: { p_goal_id: string }
         Returns: boolean
       }
+      is_active_run: { Args: { p_run_id: string }; Returns: boolean }
       is_game_owner: { Args: { p_game_id: string }; Returns: boolean }
       is_own_player: { Args: { p_player_id: string }; Returns: boolean }
       leave_player: { Args: { p_player_id: string }; Returns: undefined }

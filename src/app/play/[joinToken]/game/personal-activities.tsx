@@ -147,13 +147,17 @@ function ActivityCard({
       return;
     }
     const { data: pub } = supabase.storage.from("activity-photos").getPublicUrl(path);
-    await supabase.from("activity_submissions").insert({
+    const { error: insertError } = await supabase.from("activity_submissions").insert({
       activity_run_id: activity.runId,
       player_id: playerId,
       payload: { photo_url: pub.publicUrl },
       status: "pending",
     });
     setPending(false);
+    if (insertError) {
+      toast.error("Не удалось отправить фото ведущему");
+      return;
+    }
     setDone(true);
     toast("Фото отправлено ведущему на проверку");
   }
