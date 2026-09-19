@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Send } from "lucide-react";
+import { Send, Trash2 } from "lucide-react";
 import { useSupabaseClient } from "@/hooks/use-supabase";
 import {
   Dialog,
@@ -38,6 +38,7 @@ export function PlayerDrawer({
   onOpenChange,
   onProgressChange,
   onMessageSent,
+  onMessageDeleted,
   onEffectApplied,
 }: {
   player: Player | null;
@@ -51,6 +52,7 @@ export function PlayerDrawer({
   onOpenChange: (open: boolean) => void;
   onProgressChange: (row: PlayerGoalProgress) => void;
   onMessageSent: (row: Message) => void;
+  onMessageDeleted: (id: string) => void;
   onEffectApplied: (row: PlayerEffect) => void;
 }) {
   const supabase = useSupabaseClient();
@@ -97,6 +99,11 @@ export function PlayerDrawer({
       setBody("");
     }
     setSending(false);
+  }
+
+  async function deleteMessage(id: string) {
+    onMessageDeleted(id);
+    await supabase.from("messages").delete().eq("id", id);
   }
 
   return (
@@ -159,8 +166,16 @@ export function PlayerDrawer({
             {playerMessages.length > 0 && (
               <div className="mt-2 space-y-1.5">
                 {playerMessages.map((m) => (
-                  <div key={m.id} className="rounded-lg bg-muted/50 p-2 text-xs">
-                    {m.body}
+                  <div key={m.id} className="flex items-start gap-2 rounded-lg bg-muted/50 p-2 text-xs">
+                    <span className="min-w-0 flex-1">{m.body}</span>
+                    <button
+                      type="button"
+                      onClick={() => deleteMessage(m.id)}
+                      aria-label="Удалить сообщение"
+                      className="shrink-0 text-muted-foreground hover:text-destructive"
+                    >
+                      <Trash2 className="size-3.5" />
+                    </button>
                   </div>
                 ))}
               </div>

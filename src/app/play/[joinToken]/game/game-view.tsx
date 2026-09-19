@@ -99,17 +99,24 @@ export function GameView({
       )
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages", filter: `game_id=eq.${game.id}` },
+        { event: "*", schema: "public", table: "messages", filter: `game_id=eq.${game.id}` },
         (payload) => {
-          const message = payload.new as Message;
-          setMessages((prev) => {
-            if (prev.some((m) => m.id === message.id)) return prev;
-            toast(message.sender === "system" ? message.body : "Новое сообщение от ведущего", {
-              description: message.sender === "system" ? undefined : message.body,
+          if (payload.eventType === "DELETE") {
+            const old = payload.old as Message;
+            setMessages((prev) => prev.filter((m) => m.id !== old.id));
+            return;
+          }
+          if (payload.eventType === "INSERT") {
+            const message = payload.new as Message;
+            setMessages((prev) => {
+              if (prev.some((m) => m.id === message.id)) return prev;
+              toast(message.sender === "system" ? message.body : "Новое сообщение от ведущего", {
+                description: message.sender === "system" ? undefined : message.body,
+              });
+              navigator.vibrate?.(200);
+              return [message, ...prev];
             });
-            navigator.vibrate?.(200);
-            return [message, ...prev];
-          });
+          }
         },
       )
       .subscribe();

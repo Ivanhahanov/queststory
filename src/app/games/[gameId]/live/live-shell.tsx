@@ -87,10 +87,17 @@ export function LiveShell({
       })
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages", filter: `game_id=eq.${game.id}` },
+        { event: "*", schema: "public", table: "messages", filter: `game_id=eq.${game.id}` },
         (payload) => {
-          const row = payload.new as Message;
-          setMessages((prev) => (prev.some((m) => m.id === row.id) ? prev : [row, ...prev]));
+          if (payload.eventType === "DELETE") {
+            const old = payload.old as Message;
+            setMessages((prev) => prev.filter((m) => m.id !== old.id));
+            return;
+          }
+          if (payload.eventType === "INSERT") {
+            const row = payload.new as Message;
+            setMessages((prev) => (prev.some((m) => m.id === row.id) ? prev : [row, ...prev]));
+          }
         },
       )
       .on(
@@ -168,6 +175,7 @@ export function LiveShell({
           setProgress((prev) => (prev.some((p) => p.id === row.id) ? prev.map((p) => (p.id === row.id ? row : p)) : [...prev, row]))
         }
         onMessageSent={(row) => setMessages((prev) => (prev.some((m) => m.id === row.id) ? prev : [row, ...prev]))}
+        onMessageDeleted={(id) => setMessages((prev) => prev.filter((m) => m.id !== id))}
         onEffectApplied={(row) =>
           setPlayerEffects((prev) => (prev.some((e) => e.id === row.id) ? prev : [...prev, row]))
         }
